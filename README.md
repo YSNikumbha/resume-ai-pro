@@ -29,10 +29,10 @@ resume-ai-pro/
 ```bash
 cd backend
 mvn clean package
-mvn spring-boot:run
+DB_PASSWORD=your_postgres_password mvn spring-boot:run
 ```
 
-Ensure `JAVA_HOME` points to a full JDK 21 installation before running Maven. Before running against PostgreSQL, create a local database named `resume_ai_db` and replace the `CHANGE_ME` placeholder in `backend/src/main/resources/application.properties` with your local password.
+Ensure `JAVA_HOME` points to a full JDK 21 installation before running Maven. Before running against PostgreSQL, create a local database named `resume_ai_db`. The backend reads `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` from environment variables, with local defaults for URL and username.
 
 ### Frontend
 
