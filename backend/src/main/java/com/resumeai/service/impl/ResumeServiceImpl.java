@@ -1,0 +1,143 @@
+package com.resumeai.service.impl;
+
+import com.resumeai.dto.StoredFileDetails;
+import com.resumeai.dto.response.ResumeDetailResponse;
+import com.resumeai.dto.response.ResumeResponse;
+import com.resumeai.entity.Resume;
+import com.resumeai.entity.User;
+import com.resumeai.exception.ResumeNotFoundException;
+import com.resumeai.exception.ResumeProcessingException;
+import com.resumeai.repository.ResumeRepository;
+import com.resumeai.repository.UserRepository;
+import com.resumeai.service.FileStorageService;
+import com.resumeai.service.PdfTextExtractor;
+import com.resumeai.service.ResumeService;
+import java.nio.file.Path;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+@Service
+@RequiredArgsConstructor
+public class ResumeServiceImpl implements ResumeService {
+
+    private static final int PREVIEW_LENGTH = 300;
+    private static final String RESUME_NOT_FOUND_MESSAGE = "Resume not found.";
+    private static final String USER_NOT_FOUND_MESSAGE = "User not found.";
+
+    private final ResumeRepository resumeRepository;
+    private final UserRepository userRepository;
+    private final FileStorageService fileStorageService;
+    private final PdfTextExtractor pdfTextExtractor;
+
+    @Override
+    @Transactional
+    public ResumeDetailResponse uploadResume(MultipartFile file, String authenticatedEmail) {
+        User user = getUser(authenticatedEmail);
+        StoredFileDetails storedFile = fileStorageService.store(file);
+
+        try {
+            String extractedText = pdfTextExtractor.extractText(storedFile.filePath());
+            Resume resume = buildResume(user, storedFile, extractedText);
+            return toDetailResponse(resumeRepository.save(resume));
+        } catch (RuntimeException exception) {
+            deleteStoredFileAfterFailure(storedFile.filePath(), exception);
+            throw exception;
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResumeResponse> getCurrentUserResumes(String authenticatedEmail) {
+        User user = getUser(authenticatedEmail);
+        return resumeRepository.findAllByUserIdOrderByUploadedAtDesc(user.getId())
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResumeDetailResponse getResume(Long resumeId, String authenticatedEmail) {
+        User user = getUser(authenticatedEmail);
+        Resume resume = getOwnedResume(resumeId, user.getId());
+        return toDetailResponse(resume);
+    }
+
+    @Override
+    @Transactional
+    public void deleteResume(Long resumeId, String authenticatedEmail) {
+        User user = getUser(authenticatedEmail);
+        Resume resume = getOwnedResume(resumeId, user.getId());
+
+        fileStorageService.delete(Path.of(resume.getFilePath()));
+        resumeRepository.delete(resume);
+    }
+
+    private User getUser(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResumeProcessingException(USER_NOT_FOUND_MESSAGE));
+    }
+
+    private Resume getOwnedResume(Long resumeId, Long userId) {
+        return resumeRepository.findByIdAndUserId(resumeId, userId)
+                .orElseThrow(() -> new ResumeNotFoundException(RESUME_NOT_FOUND_MESSAGE));
+    }
+
+    private Resume buildResume(User user, StoredFileDetails storedFile, String extractedText) {
+        return Resume.builder()
+                .user(user)
+                .originalFileName(storedFile.originalFileName())
+                .storedFileName(storedFile.storedFileName())
+                .filePath(storedFile.filePath().toString())
+                .contentType(storedFile.contentType())
+                .fileSize(storedFile.fileSize())
+                .extractedText(extractedText)
+                .build();
+    }
+
+    private void deleteStoredFileAfterFailure(Path filePath, RuntimeException originalException) {
+        try {
+            fileStorageService.delete(filePath);
+        } catch (RuntimeException cleanupException) {
+            originalException.addSuppressed(cleanupException);
+        }
+    }
+
+    private ResumeResponse toResponse(Resume resume) {
+        return ResumeResponse.builder()
+                .id(resume.getId())
+                .originalFileName(resume.getOriginalFileName())
+                .contentType(resume.getContentType())
+                .fileSize(resume.getFileSize())
+                .uploadedAt(resume.getUploadedAt())
+                .updatedAt(resume.getUpdatedAt())
+                .extractedTextPreview(buildPreview(resume.getExtractedText()))
+                .build();
+    }
+
+    private ResumeDetailResponse toDetailResponse(Resume resume) {
+        return ResumeDetailResponse.builder()
+                .id(resume.getId())
+                .originalFileName(resume.getOriginalFileName())
+                .contentType(resume.getContentType())
+                .fileSize(resume.getFileSize())
+                .uploadedAt(resume.getUploadedAt())
+                .updatedAt(resume.getUpdatedAt())
+                .extractedText(resume.getExtractedText())
+                .build();
+    }
+
+    private String buildPreview(String extractedText) {
+        if (extractedText == null || extractedText.isBlank()) {
+            return "";
+        }
+
+        String trimmedText = extractedText.trim();
+        return trimmedText.length() <= PREVIEW_LENGTH
+                ? trimmedText
+                : trimmedText.substring(0, PREVIEW_LENGTH);
+    }
+}

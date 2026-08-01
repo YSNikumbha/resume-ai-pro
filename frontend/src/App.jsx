@@ -6,6 +6,9 @@ import Landing from './pages/Landing'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import Register from './pages/Register'
+import ResumeDetails from './pages/ResumeDetails'
+import ResumeHistory from './pages/ResumeHistory'
+import UploadResume from './pages/UploadResume'
 
 function App() {
   return (
@@ -20,6 +23,30 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resumes/upload"
+            element={
+              <ProtectedRoute>
+                <UploadResume />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resumes"
+            element={
+              <ProtectedRoute>
+                <ResumeHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resumes/:id"
+            element={
+              <ProtectedRoute>
+                <ResumeDetails />
               </ProtectedRoute>
             }
           />
