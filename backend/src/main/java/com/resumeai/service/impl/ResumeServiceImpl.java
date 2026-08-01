@@ -7,6 +7,7 @@ import com.resumeai.entity.Resume;
 import com.resumeai.entity.User;
 import com.resumeai.exception.ResumeNotFoundException;
 import com.resumeai.exception.ResumeProcessingException;
+import com.resumeai.repository.ResumeAnalysisRepository;
 import com.resumeai.repository.ResumeRepository;
 import com.resumeai.repository.UserRepository;
 import com.resumeai.service.FileStorageService;
@@ -28,6 +29,7 @@ public class ResumeServiceImpl implements ResumeService {
     private static final String USER_NOT_FOUND_MESSAGE = "User not found.";
 
     private final ResumeRepository resumeRepository;
+    private final ResumeAnalysisRepository resumeAnalysisRepository;
     private final UserRepository userRepository;
     private final FileStorageService fileStorageService;
     private final PdfTextExtractor pdfTextExtractor;
@@ -72,8 +74,10 @@ public class ResumeServiceImpl implements ResumeService {
         User user = getUser(authenticatedEmail);
         Resume resume = getOwnedResume(resumeId, user.getId());
 
-        fileStorageService.delete(Path.of(resume.getFilePath()));
+        resumeAnalysisRepository.deleteAllByResumeIdAndUserId(resume.getId(), user.getId());
         resumeRepository.delete(resume);
+        resumeRepository.flush();
+        fileStorageService.delete(Path.of(resume.getFilePath()));
     }
 
     private User getUser(String email) {

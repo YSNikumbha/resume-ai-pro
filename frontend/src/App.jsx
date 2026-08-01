@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
+import ResumeAnalysis from './pages/ResumeAnalysis'
 import Register from './pages/Register'
 import ResumeDetails from './pages/ResumeDetails'
 import ResumeHistory from './pages/ResumeHistory'
@@ -47,6 +48,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ResumeDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analyses/:analysisId"
+            element={
+              <ProtectedRoute>
+                <ResumeAnalysis />
               </ProtectedRoute>
             }
           />

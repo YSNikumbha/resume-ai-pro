@@ -38,6 +38,29 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
+    @ExceptionHandler(AnalysisNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleAnalysisNotFound(AnalysisNotFoundException exception) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(AiConfigurationException.class)
+    public ResponseEntity<ApiResponse> handleAiConfiguration(AiConfigurationException exception) {
+        return buildErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
+    }
+
+    @ExceptionHandler(AiAnalysisException.class)
+    public ResponseEntity<ApiResponse> handleAiAnalysis(AiAnalysisException exception) {
+        HttpStatus status = exception.getFailureType() == AiAnalysisException.FailureType.UNEXPECTED_OUTPUT
+                ? HttpStatus.BAD_GATEWAY
+                : HttpStatus.SERVICE_UNAVAILABLE;
+        return buildErrorResponse(status, exception.getMessage());
+    }
+
+    @ExceptionHandler(ResumeTextUnavailableException.class)
+    public ResponseEntity<ApiResponse> handleResumeTextUnavailable(ResumeTextUnavailableException exception) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
     @ExceptionHandler(InvalidFileException.class)
     public ResponseEntity<ApiResponse> handleInvalidFile(InvalidFileException exception) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
@@ -94,11 +117,17 @@ public class GlobalExceptionHandler {
 
     private String extractValidationMessage(MethodArgumentNotValidException exception) {
         String message = exception.getBindingResult().getFieldErrors().stream()
-                .map(FieldError::getDefaultMessage)
+                .map(this::getDefaultMessage)
+                .filter(defaultMessage -> !defaultMessage.isBlank())
                 .distinct()
                 .collect(Collectors.joining(" "));
 
         return message.isBlank() ? VALIDATION_ERROR_FALLBACK : message;
+    }
+
+    private String getDefaultMessage(FieldError fieldError) {
+        String message = fieldError.getDefaultMessage();
+        return message == null ? "" : message;
     }
 
     private ResponseEntity<ApiResponse> buildErrorResponse(HttpStatus status, String message) {
