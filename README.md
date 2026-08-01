@@ -1,6 +1,6 @@
 # ResumeAI Pro
 
-ResumeAI Pro is a Spring Boot and React resume platform with authenticated PDF upload, text extraction, resume history, and Gemini-powered resume analysis.
+ResumeAI Pro is a Spring Boot and React resume platform with authenticated PDF upload, text extraction, resume history, Gemini-powered resume analysis, and AI resume-to-job matching.
 
 ## Technology Stack
 
@@ -58,9 +58,11 @@ export GEMINI_API_KEY=your_google_ai_studio_key
 Optional AI settings:
 
 ```bash
-export GEMINI_MODEL=gemini-2.5-flash
+export GEMINI_MODEL=gemini-3.5-flash
 export AI_TEMPERATURE=0.2
 export AI_MAX_RESUME_CHARACTERS=30000
+export AI_MAX_JOB_DESCRIPTION_CHARACTERS=20000
+export AI_MAX_JOB_MATCH_INPUT_CHARACTERS=45000
 ```
 
 The backend can start without `GEMINI_API_KEY`. If analysis is requested without a key, the API returns HTTP 503 with:
@@ -94,10 +96,25 @@ GET /api/analyses
 
 The ATS score is based only on the resume text, not on a job description. It is AI-generated guidance and may differ from employer ATS systems.
 
+## AI Job Description Matching
+
+Job matching is available for authenticated users only. The backend verifies the selected resume belongs to the current user, stores the pasted job description in `job_descriptions`, creates a `job_matches` record, sends only the resume text and job description to Gemini, validates structured output, and returns arrays and objects to the frontend.
+
+API endpoints:
+
+```http
+POST /api/job-matches
+GET /api/job-matches
+GET /api/job-matches/{id}
+GET /api/job-matches/resumes/{resumeId}
+DELETE /api/job-matches/{id}
+```
+
+The match score is based only on the selected resume and pasted job description. It is AI-generated guidance and does not guarantee interview selection.
+
 Known limitations:
 
-- No job-description matching.
 - No embeddings, RAG, vector database, or resume chat.
 - No OCR or DOCX processing.
-- Analysis is synchronous and may take several seconds.
+- Analysis and matching are synchronous and may take several seconds.
 - AI output can be incomplete or imperfect, so users should review results before acting on them.

@@ -6,6 +6,8 @@ const links = [
   { label: 'Dashboard', to: '/dashboard' },
   { label: 'Upload Resume', to: '/resumes/upload' },
   { label: 'Resume History', to: '/resumes' },
+  { label: 'Match Resume', to: '/job-matches/new' },
+  { label: 'Job Match History', to: '/job-matches' },
 ]
 
 function AuthenticatedLayout({ children }) {

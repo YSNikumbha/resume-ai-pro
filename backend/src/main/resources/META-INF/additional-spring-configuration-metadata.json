@@ -34,6 +34,16 @@
       "name": "app.ai.max-resume-characters",
       "type": "java.lang.Integer",
       "description": "Maximum number of resume text characters sent to the AI model."
+    },
+    {
+      "name": "app.ai.max-job-description-characters",
+      "type": "java.lang.Integer",
+      "description": "Maximum number of job-description characters sent to the AI model."
+    },
+    {
+      "name": "app.ai.max-job-match-input-characters",
+      "type": "java.lang.Integer",
+      "description": "Maximum combined resume and job-description characters sent to the AI model for matching."
     }
   ]
 }

@@ -28,7 +28,7 @@ Spring AI 1.1 uses these official Google GenAI properties:
 
 ```properties
 spring.ai.google.genai.api-key=${GEMINI_API_KEY:}
-spring.ai.google.genai.chat.options.model=${GEMINI_MODEL:gemini-2.5-flash}
+spring.ai.google.genai.chat.options.model=${GEMINI_MODEL:gemini-3.5-flash}
 spring.ai.google.genai.chat.options.temperature=${AI_TEMPERATURE:0.2}
 ```
 
@@ -113,4 +113,4 @@ Users should review suggestions before editing a resume.
 
 ## Why This Is Not RAG Yet
 
-This phase analyzes one stored resume text directly. It does not add embeddings, pgvector, a vector database, retrieval pipelines, document chunking, resume chat, agents, or job-description matching. Those would add a separate retrieval architecture and are intentionally out of scope for Phase 5.
+This phase analyzes one stored resume text directly. It does not add embeddings, pgvector, a vector database, retrieval pipelines, document chunking, resume chat, or agents. Those would add a separate retrieval architecture and are intentionally out of scope for Phase 5.

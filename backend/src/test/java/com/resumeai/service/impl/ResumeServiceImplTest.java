@@ -8,12 +8,15 @@ import com.resumeai.entity.Resume;
 import com.resumeai.entity.User;
 import com.resumeai.entity.UserRole;
 import com.resumeai.exception.ResumeNotFoundException;
+import com.resumeai.repository.JobDescriptionRepository;
+import com.resumeai.repository.JobMatchRepository;
 import com.resumeai.repository.ResumeAnalysisRepository;
 import com.resumeai.repository.ResumeRepository;
 import com.resumeai.repository.UserRepository;
 import com.resumeai.service.FileStorageService;
 import com.resumeai.service.PdfTextExtractor;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +37,12 @@ class ResumeServiceImplTest {
     private ResumeAnalysisRepository resumeAnalysisRepository;
 
     @Mock
+    private JobMatchRepository jobMatchRepository;
+
+    @Mock
+    private JobDescriptionRepository jobDescriptionRepository;
+
+    @Mock
     private UserRepository userRepository;
 
     @Mock
@@ -51,10 +60,12 @@ class ResumeServiceImplTest {
         Resume resume = resume(user);
         when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
         when(resumeRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(resume));
+        when(jobMatchRepository.findAllByResumeIdAndUserIdOrderByCreatedAtDesc(10L, 1L)).thenReturn(List.of());
 
         resumeService.deleteResume(10L, EMAIL);
 
-        InOrder inOrder = inOrder(resumeAnalysisRepository, resumeRepository, fileStorageService);
+        InOrder inOrder = inOrder(jobMatchRepository, resumeAnalysisRepository, resumeRepository, fileStorageService);
+        inOrder.verify(jobMatchRepository).findAllByResumeIdAndUserIdOrderByCreatedAtDesc(10L, 1L);
         inOrder.verify(resumeAnalysisRepository).deleteAllByResumeIdAndUserId(10L, 1L);
         inOrder.verify(resumeRepository).delete(resume);
         inOrder.verify(resumeRepository).flush();
@@ -70,7 +81,7 @@ class ResumeServiceImplTest {
         org.assertj.core.api.Assertions.assertThatThrownBy(() -> resumeService.deleteResume(10L, EMAIL))
                 .isInstanceOf(ResumeNotFoundException.class);
 
-        verifyNoInteractions(resumeAnalysisRepository, fileStorageService);
+        verifyNoInteractions(jobMatchRepository, resumeAnalysisRepository, fileStorageService);
     }
 
     private User user() {

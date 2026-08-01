@@ -59,7 +59,7 @@ Successful response:
   "suggestions": ["Add quantified impact for projects"],
   "analyzedAt": "2026-08-01T15:10:30",
   "updatedAt": "2026-08-01T15:10:35",
-  "modelName": "gemini-2.5-flash",
+  "modelName": "gemini-3.5-flash",
   "status": "COMPLETED",
   "failureMessage": null
 }
@@ -118,7 +118,7 @@ Successful response:
     "suggestions": ["Add quantified achievements"],
     "analyzedAt": "2026-08-01T15:10:30",
     "updatedAt": "2026-08-01T15:10:35",
-    "modelName": "gemini-2.5-flash",
+    "modelName": "gemini-3.5-flash",
     "status": "COMPLETED",
     "failureMessage": null
   }

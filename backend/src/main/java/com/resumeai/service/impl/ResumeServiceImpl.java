@@ -3,10 +3,14 @@ package com.resumeai.service.impl;
 import com.resumeai.dto.StoredFileDetails;
 import com.resumeai.dto.response.ResumeDetailResponse;
 import com.resumeai.dto.response.ResumeResponse;
+import com.resumeai.entity.JobDescription;
+import com.resumeai.entity.JobMatch;
 import com.resumeai.entity.Resume;
 import com.resumeai.entity.User;
 import com.resumeai.exception.ResumeNotFoundException;
 import com.resumeai.exception.ResumeProcessingException;
+import com.resumeai.repository.JobDescriptionRepository;
+import com.resumeai.repository.JobMatchRepository;
 import com.resumeai.repository.ResumeAnalysisRepository;
 import com.resumeai.repository.ResumeRepository;
 import com.resumeai.repository.UserRepository;
@@ -14,7 +18,9 @@ import com.resumeai.service.FileStorageService;
 import com.resumeai.service.PdfTextExtractor;
 import com.resumeai.service.ResumeService;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +36,8 @@ public class ResumeServiceImpl implements ResumeService {
 
     private final ResumeRepository resumeRepository;
     private final ResumeAnalysisRepository resumeAnalysisRepository;
+    private final JobMatchRepository jobMatchRepository;
+    private final JobDescriptionRepository jobDescriptionRepository;
     private final UserRepository userRepository;
     private final FileStorageService fileStorageService;
     private final PdfTextExtractor pdfTextExtractor;
@@ -74,10 +82,35 @@ public class ResumeServiceImpl implements ResumeService {
         User user = getUser(authenticatedEmail);
         Resume resume = getOwnedResume(resumeId, user.getId());
 
+        deleteJobMatchesForResume(resume.getId(), user.getId());
         resumeAnalysisRepository.deleteAllByResumeIdAndUserId(resume.getId(), user.getId());
         resumeRepository.delete(resume);
         resumeRepository.flush();
         fileStorageService.delete(Path.of(resume.getFilePath()));
+    }
+
+    private void deleteJobMatchesForResume(Long resumeId, Long userId) {
+        List<JobMatch> jobMatches = jobMatchRepository.findAllByResumeIdAndUserIdOrderByCreatedAtDesc(resumeId, userId);
+        if (jobMatches.isEmpty()) {
+            return;
+        }
+
+        List<JobDescription> jobDescriptions = jobMatches.stream()
+                .map(JobMatch::getJobDescription)
+                .toList();
+
+        jobMatchRepository.deleteAll(jobMatches);
+        jobMatchRepository.flush();
+
+        Set<Long> deletedJobDescriptionIds = new HashSet<>();
+        for (JobDescription jobDescription : jobDescriptions) {
+            Long jobDescriptionId = jobDescription.getId();
+            if (jobDescriptionId != null
+                    && deletedJobDescriptionIds.add(jobDescriptionId)
+                    && jobMatchRepository.countByJobDescriptionId(jobDescriptionId) == 0) {
+                jobDescriptionRepository.delete(jobDescription);
+            }
+        }
     }
 
     private User getUser(String email) {

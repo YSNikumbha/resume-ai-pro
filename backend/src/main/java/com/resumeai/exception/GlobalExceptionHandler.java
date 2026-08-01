@@ -43,6 +43,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
+    @ExceptionHandler(JobMatchNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleJobMatchNotFound(JobMatchNotFoundException exception) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
     @ExceptionHandler(AiConfigurationException.class)
     public ResponseEntity<ApiResponse> handleAiConfiguration(AiConfigurationException exception) {
         return buildErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
@@ -54,6 +59,19 @@ public class GlobalExceptionHandler {
                 ? HttpStatus.BAD_GATEWAY
                 : HttpStatus.SERVICE_UNAVAILABLE;
         return buildErrorResponse(status, exception.getMessage());
+    }
+
+    @ExceptionHandler(JobMatchAiException.class)
+    public ResponseEntity<ApiResponse> handleJobMatchAi(JobMatchAiException exception) {
+        HttpStatus status = exception.getFailureType() == JobMatchAiException.FailureType.UNEXPECTED_OUTPUT
+                ? HttpStatus.BAD_GATEWAY
+                : HttpStatus.SERVICE_UNAVAILABLE;
+        return buildErrorResponse(status, exception.getMessage());
+    }
+
+    @ExceptionHandler(JobDescriptionValidationException.class)
+    public ResponseEntity<ApiResponse> handleJobDescriptionValidation(JobDescriptionValidationException exception) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(ResumeTextUnavailableException.class)

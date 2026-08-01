@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app.ai")
 public class AiProperties {
 
-    private String model = "gemini-2.5-flash";
+    private String model = "gemini-3.5-flash";
 
     @DecimalMin("0.0")
     @DecimalMax("1.0")
@@ -22,4 +22,10 @@ public class AiProperties {
 
     @Min(1000)
     private int maxResumeCharacters = 30000;
+
+    @Min(1000)
+    private int maxJobDescriptionCharacters = 20000;
+
+    @Min(2000)
+    private int maxJobMatchInputCharacters = 45000;
 }

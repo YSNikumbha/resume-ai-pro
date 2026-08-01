@@ -4,9 +4,11 @@ import AuthenticatedLayout from '../components/AuthenticatedLayout'
 import LoadingSpinner from '../components/LoadingSpinner'
 import StatusMessage from '../components/StatusMessage'
 import { analyzeResume, getResumeAnalyses } from '../services/analysisService'
+import { getResumeJobMatches } from '../services/jobMatchService'
 import { deleteResume, getResumeById } from '../services/resumeService'
 import { getScoreMeta, getStatusClasses } from '../utils/analysisFormatters'
 import { getApiErrorMessage } from '../utils/errorMessages'
+import { getJobMatchScoreMeta } from '../utils/jobMatchFormatters'
 import { formatDateTime, formatFileSize } from '../utils/resumeFormatters'
 
 function ResumeDetails() {
@@ -19,19 +21,22 @@ function ResumeDetails() {
   const [analyzing, setAnalyzing] = useState(false)
   const [analysisMessage, setAnalysisMessage] = useState('')
   const [analyses, setAnalyses] = useState([])
+  const [jobMatches, setJobMatches] = useState([])
 
   useEffect(() => {
     let isMounted = true
 
     async function loadResume() {
       try {
-        const [resumeData, analysisData] = await Promise.all([
+        const [resumeData, analysisData, matchData] = await Promise.all([
           getResumeById(id),
           getResumeAnalyses(id),
+          getResumeJobMatches(id),
         ])
         if (isMounted) {
           setResume(resumeData)
           setAnalyses(analysisData)
+          setJobMatches(matchData)
         }
       } catch (error) {
         if (isMounted) {
@@ -113,6 +118,12 @@ function ResumeDetails() {
 
           {resume ? (
             <div className="flex flex-wrap gap-3">
+              <Link
+                to={`/job-matches/new?resumeId=${resume.id}`}
+                className="inline-flex min-h-10 w-fit items-center justify-center rounded-lg border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-100"
+              >
+                Match With Job
+              </Link>
               <button
                 type="button"
                 disabled={analyzing || deleting}
@@ -200,6 +211,65 @@ function ResumeDetails() {
                           </div>
                           <Link
                             to={`/analyses/${analysis.id}`}
+                            className="inline-flex min-h-10 w-fit items-center justify-center rounded-lg border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-100"
+                          >
+                            View
+                          </Link>
+                        </div>
+                      </article>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-8">
+              <h2 className="text-lg font-semibold text-slate-950">
+                Job Match History
+              </h2>
+              {jobMatches.length === 0 ? (
+                <div className="mt-4 rounded-lg border border-dashed border-blue-200 bg-blue-50 p-5 text-sm text-slate-600">
+                  No job matches for this resume yet.
+                </div>
+              ) : (
+                <div className="mt-4 grid gap-3">
+                  {jobMatches.map((match) => {
+                    const score = Number.isFinite(match.matchScore)
+                      ? match.matchScore
+                      : null
+                    const scoreMeta = getJobMatchScoreMeta(score)
+
+                    return (
+                      <article
+                        key={match.id}
+                        className="rounded-lg border border-slate-200 bg-slate-50 p-4"
+                      >
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                          <div>
+                            <p className="text-sm font-semibold text-slate-950">
+                              {match.jobTitle}
+                            </p>
+                            <p className="mt-1 text-xs text-slate-500">
+                              {match.companyName || 'Company unavailable'} ·{' '}
+                              {formatDateTime(match.createdAt)}
+                            </p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              <span
+                                className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${scoreMeta.bg} ${scoreMeta.text}`}
+                              >
+                                Match {score ?? '--'} · {scoreMeta.label}
+                              </span>
+                              <span
+                                className={`rounded-lg border px-3 py-1.5 text-xs font-semibold ${getStatusClasses(
+                                  match.status,
+                                )}`}
+                              >
+                                {match.status}
+                              </span>
+                            </div>
+                          </div>
+                          <Link
+                            to={`/job-matches/${match.id}`}
                             className="inline-flex min-h-10 w-fit items-center justify-center rounded-lg border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-100"
                           >
                             View

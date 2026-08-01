@@ -1,7 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import AuthProvider from './context/AuthProvider'
+import CreateJobMatch from './pages/CreateJobMatch'
 import Dashboard from './pages/Dashboard'
+import JobMatchDetails from './pages/JobMatchDetails'
+import JobMatchHistory from './pages/JobMatchHistory'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
@@ -56,6 +59,30 @@ function App() {
             element={
               <ProtectedRoute>
                 <ResumeAnalysis />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/job-matches/new"
+            element={
+              <ProtectedRoute>
+                <CreateJobMatch />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/job-matches"
+            element={
+              <ProtectedRoute>
+                <JobMatchHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/job-matches/:id"
+            element={
+              <ProtectedRoute>
+                <JobMatchDetails />
               </ProtectedRoute>
             }
           />
