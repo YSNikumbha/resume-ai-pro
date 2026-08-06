@@ -53,6 +53,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
     }
 
+    @ExceptionHandler(EmbeddingConfigurationException.class)
+    public ResponseEntity<ApiResponse> handleEmbeddingConfiguration(EmbeddingConfigurationException exception) {
+        return buildErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
+    }
+
     @ExceptionHandler(AiAnalysisException.class)
     public ResponseEntity<ApiResponse> handleAiAnalysis(AiAnalysisException exception) {
         HttpStatus status = exception.getFailureType() == AiAnalysisException.FailureType.UNEXPECTED_OUTPUT
@@ -67,6 +72,29 @@ public class GlobalExceptionHandler {
                 ? HttpStatus.BAD_GATEWAY
                 : HttpStatus.SERVICE_UNAVAILABLE;
         return buildErrorResponse(status, exception.getMessage());
+    }
+
+    @ExceptionHandler(ResumeChatException.class)
+    public ResponseEntity<ApiResponse> handleResumeChat(ResumeChatException exception) {
+        HttpStatus status = exception.getFailureType() == ResumeChatException.FailureType.UNEXPECTED_OUTPUT
+                ? HttpStatus.BAD_GATEWAY
+                : HttpStatus.SERVICE_UNAVAILABLE;
+        return buildErrorResponse(status, exception.getMessage());
+    }
+
+    @ExceptionHandler(ResumeIndexingException.class)
+    public ResponseEntity<ApiResponse> handleResumeIndexing(ResumeIndexingException exception) {
+        return buildErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
+    }
+
+    @ExceptionHandler(RagRetrievalException.class)
+    public ResponseEntity<ApiResponse> handleRagRetrieval(RagRetrievalException exception) {
+        return buildErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
+    }
+
+    @ExceptionHandler(ResumeNotIndexedException.class)
+    public ResponseEntity<ApiResponse> handleResumeNotIndexed(ResumeNotIndexedException exception) {
+        return buildErrorResponse(HttpStatus.CONFLICT, exception.getMessage());
     }
 
     @ExceptionHandler(JobDescriptionValidationException.class)
@@ -125,6 +153,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> handleValidationException(MethodArgumentNotValidException exception) {
         String message = extractValidationMessage(exception);
         return buildErrorResponse(HttpStatus.BAD_REQUEST, message);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse> handleIllegalArgument(IllegalArgumentException exception) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

@@ -1,9 +1,14 @@
 package com.resumeai.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.ai.google.genai.GoogleGenAiEmbeddingConnectionDetails;
+import org.springframework.ai.google.genai.text.GoogleGenAiTextEmbeddingModel;
+import org.springframework.ai.google.genai.text.GoogleGenAiTextEmbeddingOptions;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -11,10 +16,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableConfigurationProperties(AiProperties.class)
+@EnableConfigurationProperties({AiProperties.class, RagProperties.class})
 public class AiConfig {
 
     private final AiProperties aiProperties;
+    private final RagProperties ragProperties;
 
     @Bean
     @ConditionalOnProperty(name = "spring.ai.model.chat", havingValue = "google-genai")
@@ -30,5 +36,22 @@ public class AiConfig {
                         .temperature(aiProperties.getTemperature())
                         .build())
                 .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "spring.ai.model.embedding.text", havingValue = "google-genai")
+    public EmbeddingModel resumeEmbeddingModel(
+            @Value("${spring.ai.google.genai.embedding.api-key:}") String apiKey
+    ) {
+        GoogleGenAiEmbeddingConnectionDetails connectionDetails = GoogleGenAiEmbeddingConnectionDetails.builder()
+                .apiKey(apiKey)
+                .build();
+        GoogleGenAiTextEmbeddingOptions options = GoogleGenAiTextEmbeddingOptions.builder()
+                .model(ragProperties.getEmbeddingModel())
+                .taskType(GoogleGenAiTextEmbeddingOptions.TaskType.RETRIEVAL_DOCUMENT)
+                .autoTruncate(true)
+                .build();
+
+        return new GoogleGenAiTextEmbeddingModel(connectionDetails, options);
     }
 }

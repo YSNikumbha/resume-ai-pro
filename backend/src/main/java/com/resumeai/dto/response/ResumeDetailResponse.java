@@ -1,5 +1,6 @@
 package com.resumeai.dto.response;
 
+import com.resumeai.entity.ResumeIndexStatus;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,14 @@ public class ResumeDetailResponse {
     private LocalDateTime uploadedAt;
 
     private LocalDateTime updatedAt;
+
+    private ResumeIndexStatus indexStatus;
+
+    private LocalDateTime indexedAt;
+
+    private Integer indexedChunkCount;
+
+    private String indexingFailureMessage;
 
     private String extractedText;
 }

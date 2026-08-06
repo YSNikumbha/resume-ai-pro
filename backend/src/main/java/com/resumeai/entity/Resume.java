@@ -2,6 +2,8 @@ package com.resumeai.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -55,6 +57,21 @@ public class Resume {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String extractedText;
 
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30, columnDefinition = "varchar(30) default 'NOT_INDEXED'")
+    private ResumeIndexStatus indexStatus = ResumeIndexStatus.NOT_INDEXED;
+
+    private LocalDateTime indexedAt;
+
+    @Builder.Default
+    @Column(columnDefinition = "integer default 0")
+    private Integer indexedChunkCount = 0;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String indexingFailureMessage;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime uploadedAt;
 
@@ -66,6 +83,12 @@ public class Resume {
         LocalDateTime now = LocalDateTime.now();
         uploadedAt = now;
         updatedAt = now;
+        if (indexStatus == null) {
+            indexStatus = ResumeIndexStatus.NOT_INDEXED;
+        }
+        if (indexedChunkCount == null) {
+            indexedChunkCount = 0;
+        }
     }
 
     @PreUpdate

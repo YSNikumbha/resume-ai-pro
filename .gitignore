@@ -11,6 +11,7 @@ backend/uploads/
 .env
 .env.*
 !.env.example
+backend/src/main/resources/application-local.properties
 logs/
 *.log
 npm-debug.log*

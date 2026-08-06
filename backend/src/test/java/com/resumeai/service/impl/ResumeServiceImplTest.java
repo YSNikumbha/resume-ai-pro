@@ -5,12 +5,14 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.resumeai.entity.Resume;
+import com.resumeai.entity.ResumeIndexStatus;
 import com.resumeai.entity.User;
 import com.resumeai.entity.UserRole;
 import com.resumeai.exception.ResumeNotFoundException;
 import com.resumeai.repository.JobDescriptionRepository;
 import com.resumeai.repository.JobMatchRepository;
 import com.resumeai.repository.ResumeAnalysisRepository;
+import com.resumeai.repository.ResumeChatMessageRepository;
 import com.resumeai.repository.ResumeRepository;
 import com.resumeai.repository.UserRepository;
 import com.resumeai.service.FileStorageService;
@@ -24,6 +26,8 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.ObjectProvider;
 
 @ExtendWith(MockitoExtension.class)
 class ResumeServiceImplTest {
@@ -35,6 +39,9 @@ class ResumeServiceImplTest {
 
     @Mock
     private ResumeAnalysisRepository resumeAnalysisRepository;
+
+    @Mock
+    private ResumeChatMessageRepository resumeChatMessageRepository;
 
     @Mock
     private JobMatchRepository jobMatchRepository;
@@ -51,6 +58,9 @@ class ResumeServiceImplTest {
     @Mock
     private PdfTextExtractor pdfTextExtractor;
 
+    @Mock
+    private ObjectProvider<VectorStore> vectorStoreProvider;
+
     @InjectMocks
     private ResumeServiceImpl resumeService;
 
@@ -64,7 +74,14 @@ class ResumeServiceImplTest {
 
         resumeService.deleteResume(10L, EMAIL);
 
-        InOrder inOrder = inOrder(jobMatchRepository, resumeAnalysisRepository, resumeRepository, fileStorageService);
+        InOrder inOrder = inOrder(
+                resumeChatMessageRepository,
+                jobMatchRepository,
+                resumeAnalysisRepository,
+                resumeRepository,
+                fileStorageService
+        );
+        inOrder.verify(resumeChatMessageRepository).deleteAllByResumeIdAndUserId(10L, 1L);
         inOrder.verify(jobMatchRepository).findAllByResumeIdAndUserIdOrderByCreatedAtDesc(10L, 1L);
         inOrder.verify(resumeAnalysisRepository).deleteAllByResumeIdAndUserId(10L, 1L);
         inOrder.verify(resumeRepository).delete(resume);
@@ -81,7 +98,13 @@ class ResumeServiceImplTest {
         org.assertj.core.api.Assertions.assertThatThrownBy(() -> resumeService.deleteResume(10L, EMAIL))
                 .isInstanceOf(ResumeNotFoundException.class);
 
-        verifyNoInteractions(jobMatchRepository, resumeAnalysisRepository, fileStorageService);
+        verifyNoInteractions(
+                resumeChatMessageRepository,
+                jobMatchRepository,
+                resumeAnalysisRepository,
+                fileStorageService,
+                vectorStoreProvider
+        );
     }
 
     private User user() {
@@ -104,6 +127,8 @@ class ResumeServiceImplTest {
                 .contentType("application/pdf")
                 .fileSize(1024L)
                 .extractedText("Java React resume")
+                .indexStatus(ResumeIndexStatus.NOT_INDEXED)
+                .indexedChunkCount(0)
                 .build();
     }
 }

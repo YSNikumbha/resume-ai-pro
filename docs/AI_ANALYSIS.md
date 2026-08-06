@@ -111,6 +111,6 @@ This score is AI-generated guidance and may differ from employer ATS systems.
 
 Users should review suggestions before editing a resume.
 
-## Why This Is Not RAG Yet
+## How This Differs From RAG
 
-This phase analyzes one stored resume text directly. It does not add embeddings, pgvector, a vector database, retrieval pipelines, document chunking, resume chat, or agents. Those would add a separate retrieval architecture and are intentionally out of scope for Phase 5.
+Resume analysis still analyzes one stored resume text directly and saves a structured report. Phase 7 adds a separate RAG pipeline for chat, where resume chunks are embedded, retrieved from pgvector, and cited in answers. Analysis does not use that vector retrieval pipeline.

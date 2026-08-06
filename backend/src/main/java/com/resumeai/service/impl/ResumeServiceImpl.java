@@ -6,12 +6,16 @@ import com.resumeai.dto.response.ResumeResponse;
 import com.resumeai.entity.JobDescription;
 import com.resumeai.entity.JobMatch;
 import com.resumeai.entity.Resume;
+import com.resumeai.entity.ResumeIndexStatus;
 import com.resumeai.entity.User;
+import com.resumeai.exception.EmbeddingConfigurationException;
 import com.resumeai.exception.ResumeNotFoundException;
 import com.resumeai.exception.ResumeProcessingException;
+import com.resumeai.rag.RagMetadata;
 import com.resumeai.repository.JobDescriptionRepository;
 import com.resumeai.repository.JobMatchRepository;
 import com.resumeai.repository.ResumeAnalysisRepository;
+import com.resumeai.repository.ResumeChatMessageRepository;
 import com.resumeai.repository.ResumeRepository;
 import com.resumeai.repository.UserRepository;
 import com.resumeai.service.FileStorageService;
@@ -22,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,14 +39,18 @@ public class ResumeServiceImpl implements ResumeService {
     private static final int PREVIEW_LENGTH = 300;
     private static final String RESUME_NOT_FOUND_MESSAGE = "Resume not found.";
     private static final String USER_NOT_FOUND_MESSAGE = "User not found.";
+    private static final String RAG_UNAVAILABLE_MESSAGE =
+            "Resume index is temporarily unavailable. Please try again later.";
 
     private final ResumeRepository resumeRepository;
     private final ResumeAnalysisRepository resumeAnalysisRepository;
+    private final ResumeChatMessageRepository resumeChatMessageRepository;
     private final JobMatchRepository jobMatchRepository;
     private final JobDescriptionRepository jobDescriptionRepository;
     private final UserRepository userRepository;
     private final FileStorageService fileStorageService;
     private final PdfTextExtractor pdfTextExtractor;
+    private final ObjectProvider<VectorStore> vectorStoreProvider;
 
     @Override
     @Transactional
@@ -82,11 +92,26 @@ public class ResumeServiceImpl implements ResumeService {
         User user = getUser(authenticatedEmail);
         Resume resume = getOwnedResume(resumeId, user.getId());
 
+        deleteVectorChunksForResume(resume, user.getId());
+        resumeChatMessageRepository.deleteAllByResumeIdAndUserId(resume.getId(), user.getId());
         deleteJobMatchesForResume(resume.getId(), user.getId());
         resumeAnalysisRepository.deleteAllByResumeIdAndUserId(resume.getId(), user.getId());
         resumeRepository.delete(resume);
         resumeRepository.flush();
         fileStorageService.delete(Path.of(resume.getFilePath()));
+    }
+
+    private void deleteVectorChunksForResume(Resume resume, Long userId) {
+        VectorStore vectorStore = vectorStoreProvider.getIfAvailable();
+        if (vectorStore == null) {
+            if (resume.getIndexStatus() == ResumeIndexStatus.INDEXED
+                    || resume.getIndexStatus() == ResumeIndexStatus.INDEXING) {
+                throw new EmbeddingConfigurationException(RAG_UNAVAILABLE_MESSAGE);
+            }
+            return;
+        }
+
+        vectorStore.delete(RagMetadata.ownerResumeFilter(userId, resume.getId()));
     }
 
     private void deleteJobMatchesForResume(Long resumeId, Long userId) {
@@ -151,6 +176,10 @@ public class ResumeServiceImpl implements ResumeService {
                 .fileSize(resume.getFileSize())
                 .uploadedAt(resume.getUploadedAt())
                 .updatedAt(resume.getUpdatedAt())
+                .indexStatus(resume.getIndexStatus())
+                .indexedAt(resume.getIndexedAt())
+                .indexedChunkCount(resume.getIndexedChunkCount())
+                .indexingFailureMessage(resume.getIndexingFailureMessage())
                 .extractedTextPreview(buildPreview(resume.getExtractedText()))
                 .build();
     }
@@ -163,6 +192,10 @@ public class ResumeServiceImpl implements ResumeService {
                 .fileSize(resume.getFileSize())
                 .uploadedAt(resume.getUploadedAt())
                 .updatedAt(resume.getUpdatedAt())
+                .indexStatus(resume.getIndexStatus())
+                .indexedAt(resume.getIndexedAt())
+                .indexedChunkCount(resume.getIndexedChunkCount())
+                .indexingFailureMessage(resume.getIndexingFailureMessage())
                 .extractedText(resume.getExtractedText())
                 .build();
     }

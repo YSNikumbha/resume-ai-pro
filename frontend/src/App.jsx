@@ -10,6 +10,7 @@ import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import ResumeAnalysis from './pages/ResumeAnalysis'
 import Register from './pages/Register'
+import ResumeChat from './pages/ResumeChat'
 import ResumeDetails from './pages/ResumeDetails'
 import ResumeHistory from './pages/ResumeHistory'
 import UploadResume from './pages/UploadResume'
@@ -43,6 +44,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ResumeHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resumes/:resumeId/chat"
+            element={
+              <ProtectedRoute>
+                <ResumeChat />
               </ProtectedRoute>
             }
           />

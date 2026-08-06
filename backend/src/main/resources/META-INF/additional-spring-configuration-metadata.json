@@ -44,6 +44,46 @@
       "name": "app.ai.max-job-match-input-characters",
       "type": "java.lang.Integer",
       "description": "Maximum combined resume and job-description characters sent to the AI model for matching."
+    },
+    {
+      "name": "app.rag.embedding-model",
+      "type": "java.lang.String",
+      "description": "Google GenAI embedding model used for resume RAG indexing and retrieval."
+    },
+    {
+      "name": "app.rag.vector-table-name",
+      "type": "java.lang.String",
+      "description": "PostgreSQL pgvector table used for resume chunks."
+    },
+    {
+      "name": "app.rag.chunk-size",
+      "type": "java.lang.Integer",
+      "description": "Target character size for resume RAG chunks."
+    },
+    {
+      "name": "app.rag.chunk-overlap",
+      "type": "java.lang.Integer",
+      "description": "Character overlap between adjacent resume RAG chunks."
+    },
+    {
+      "name": "app.rag.top-k",
+      "type": "java.lang.Integer",
+      "description": "Maximum number of resume chunks retrieved for one chat question."
+    },
+    {
+      "name": "app.rag.similarity-threshold",
+      "type": "java.lang.Double",
+      "description": "Minimum vector similarity score accepted for resume chat retrieval."
+    },
+    {
+      "name": "app.rag.max-question-length",
+      "type": "java.lang.Integer",
+      "description": "Maximum accepted resume chat question length."
+    },
+    {
+      "name": "app.rag.source-excerpt-length",
+      "type": "java.lang.Integer",
+      "description": "Maximum source excerpt length returned with resume chat citations."
     }
   ]
 }
