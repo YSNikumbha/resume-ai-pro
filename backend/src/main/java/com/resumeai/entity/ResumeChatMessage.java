@@ -7,7 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -39,15 +38,12 @@ public class ResumeChatMessage {
     @JoinColumn(name = "resume_id", nullable = false)
     private Resume resume;
 
-    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String question;
 
-    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String answer;
 
-    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String sourcesJson;
 

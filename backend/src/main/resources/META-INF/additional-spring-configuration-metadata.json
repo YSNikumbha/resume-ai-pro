@@ -51,6 +51,11 @@
       "description": "Google GenAI embedding model used for resume RAG indexing and retrieval."
     },
     {
+      "name": "app.rag.embedding-dimensions",
+      "type": "java.lang.Integer",
+      "description": "Number of embedding dimensions requested from Gemini and expected by pgvector."
+    },
+    {
       "name": "app.rag.vector-table-name",
       "type": "java.lang.String",
       "description": "PostgreSQL pgvector table used for resume chunks."

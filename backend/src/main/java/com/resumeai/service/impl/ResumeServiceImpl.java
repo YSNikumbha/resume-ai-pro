@@ -22,6 +22,7 @@ import com.resumeai.service.FileStorageService;
 import com.resumeai.service.PdfTextExtractor;
 import com.resumeai.service.ResumeService;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -120,9 +121,13 @@ public class ResumeServiceImpl implements ResumeService {
             return;
         }
 
-        List<JobDescription> jobDescriptions = jobMatches.stream()
-                .map(JobMatch::getJobDescription)
-                .toList();
+        List<JobDescription> jobDescriptions = new ArrayList<>(jobMatches.size());
+        for (JobMatch jobMatch : jobMatches) {
+            JobDescription jobDescription = jobMatch.getJobDescription();
+            if (jobDescription != null) {
+                jobDescriptions.add(jobDescription);
+            }
+        }
 
         jobMatchRepository.deleteAll(jobMatches);
         jobMatchRepository.flush();

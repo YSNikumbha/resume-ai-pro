@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -53,7 +52,6 @@ public class Resume {
     @Column(nullable = false)
     private Long fileSize;
 
-    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String extractedText;
 
@@ -68,7 +66,6 @@ public class Resume {
     @Column(columnDefinition = "integer default 0")
     private Integer indexedChunkCount = 0;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String indexingFailureMessage;
 

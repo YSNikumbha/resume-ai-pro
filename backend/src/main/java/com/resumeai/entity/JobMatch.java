@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -48,39 +47,30 @@ public class JobMatch {
 
     private Integer matchScore;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String matchedSkills;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String missingSkills;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String experienceMatch;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String educationMatch;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String strengths;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String gaps;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String recommendations;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String keywordSuggestions;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String summary;
 

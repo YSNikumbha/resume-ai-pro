@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -42,37 +41,29 @@ public class ResumeAnalysis {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String summary;
 
     private Integer atsScore;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String skills;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String education;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String experience;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String projects;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String strengths;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String weaknesses;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String suggestions;
 

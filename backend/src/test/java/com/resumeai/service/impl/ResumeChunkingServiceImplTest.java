@@ -46,8 +46,11 @@ class ResumeChunkingServiceImplTest {
     @Test
     void chunkIndexesAreSequential() {
         List<ResumeChunk> chunks = chunkingService.chunk(longResumeText());
+        List<Integer> chunkIndexes = chunks.stream()
+                .map(chunk -> chunk.chunkIndex())
+                .toList();
 
-        assertThat(chunks).extracting(ResumeChunk::chunkIndex)
+        assertThat(chunkIndexes)
                 .containsExactlyElementsOf(java.util.stream.IntStream.range(0, chunks.size()).boxed().toList());
     }
 
@@ -75,8 +78,11 @@ class ResumeChunkingServiceImplTest {
                 SKILLS
                 Java Spring Boot React PostgreSQL Docker Kubernetes AWS REST APIs.
                 """);
+        List<String> sectionNames = chunks.stream()
+                .map(chunk -> chunk.sectionName())
+                .toList();
 
-        assertThat(chunks).extracting(ResumeChunk::sectionName)
+        assertThat(sectionNames)
                 .contains("SUMMARY", "SKILLS");
     }
 

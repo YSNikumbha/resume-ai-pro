@@ -15,7 +15,11 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app.rag")
 public class RagProperties {
 
-    private String embeddingModel = "text-embedding-004";
+    private String embeddingModel = "gemini-embedding-001";
+
+    @Min(1)
+    @Max(4096)
+    private int embeddingDimensions = 768;
 
     private String vectorTableName = "resume_vector_store";
 

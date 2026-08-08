@@ -8,7 +8,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.resumeai.config.RagProperties;
 import com.resumeai.dto.rag.ResumeChunk;
 import com.resumeai.dto.response.ResumeIndexResponse;
 import com.resumeai.entity.Resume;
@@ -29,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -64,6 +64,9 @@ class ResumeIndexingServiceImplTest {
     @Mock
     private VectorStore vectorStore;
 
+    @Captor
+    private ArgumentCaptor<List<Document>> documentListCaptor;
+
     private ResumeIndexingServiceImpl indexingService;
     private AtomicReference<Resume> savedResume;
 
@@ -75,7 +78,6 @@ class ResumeIndexingServiceImplTest {
                 resumeRepository,
                 chunkingService,
                 vectorStoreProvider,
-                new RagProperties(),
                 testTransactionManager()
         );
     }
@@ -181,12 +183,11 @@ class ResumeIndexingServiceImplTest {
         mockPersistence(resume);
         mockVectorStore();
         when(chunkingService.chunk(RESUME_TEXT)).thenReturn(chunks());
-        ArgumentCaptor<List<Document>> captor = ArgumentCaptor.forClass(List.class);
 
         indexingService.indexResume(10L, EMAIL);
 
-        verify(vectorStore).add(captor.capture());
-        Document document = captor.getValue().getFirst();
+        verify(vectorStore).add(documentListCaptor.capture());
+        Document document = documentListCaptor.getValue().getFirst();
         assertThat(document.getMetadata()).containsEntry("userId", "1");
         assertThat(document.getMetadata()).containsEntry("resumeId", "10");
         assertThat(document.getMetadata()).containsEntry("originalFileName", "resume.pdf");

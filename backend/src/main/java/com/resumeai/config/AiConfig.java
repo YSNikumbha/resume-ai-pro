@@ -49,6 +49,7 @@ public class AiConfig {
         GoogleGenAiTextEmbeddingOptions options = GoogleGenAiTextEmbeddingOptions.builder()
                 .model(ragProperties.getEmbeddingModel())
                 .taskType(GoogleGenAiTextEmbeddingOptions.TaskType.RETRIEVAL_DOCUMENT)
+                .dimensions(ragProperties.getEmbeddingDimensions())
                 .autoTruncate(true)
                 .build();
 

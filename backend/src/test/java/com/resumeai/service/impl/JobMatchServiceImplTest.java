@@ -192,7 +192,9 @@ class JobMatchServiceImplTest {
 
         List<JobMatchResponse> responses = jobMatchService.getCurrentUserMatches(EMAIL);
 
-        assertThat(responses).extracting(JobMatchResponse::getId).containsExactly(302L, 301L);
+        assertThat(responses).hasSize(2);
+        assertThat(responses.getFirst().getId()).isEqualTo(302L);
+        assertThat(responses.get(1).getId()).isEqualTo(301L);
     }
 
     @Test

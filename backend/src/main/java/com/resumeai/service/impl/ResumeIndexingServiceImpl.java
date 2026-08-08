@@ -1,6 +1,5 @@
 package com.resumeai.service.impl;
 
-import com.resumeai.config.RagProperties;
 import com.resumeai.dto.rag.ResumeChunk;
 import com.resumeai.dto.response.ResumeIndexResponse;
 import com.resumeai.entity.Resume;
@@ -52,7 +51,6 @@ public class ResumeIndexingServiceImpl implements ResumeIndexingService {
     private final ResumeRepository resumeRepository;
     private final ResumeChunkingService chunkingService;
     private final ObjectProvider<VectorStore> vectorStoreProvider;
-    private final RagProperties ragProperties;
     private final PlatformTransactionManager transactionManager;
 
     @Override
