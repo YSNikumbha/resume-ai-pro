@@ -70,22 +70,19 @@ function JobMatchHistory() {
 
   return (
     <AuthenticatedLayout>
-      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5 sm:p-8">
+      <section className="page-enter">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-sm font-semibold text-blue-700">Job Matching</p>
-            <h1 className="mt-2 text-3xl font-bold text-slate-950">
+            <p className="eyebrow">Job Matching</p>
+            <h1 className="mt-3 text-3xl font-black text-white">
               Job Match History
             </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-              Review saved resume-to-job comparisons and re-run matching from
-              any resume details page.
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">
+              Review saved resume-to-job comparisons, scores, statuses, and
+              recommendations.
             </p>
           </div>
-          <Link
-            to="/job-matches/new"
-            className="inline-flex min-h-10 w-fit items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-          >
+          <Link to="/job-matches/new" className="primary-button min-h-10 w-fit px-4 py-2">
             New Job Match
           </Link>
         </div>
@@ -100,19 +97,24 @@ function JobMatchHistory() {
             <LoadingSpinner label="Loading job matches" size="lg" />
           </div>
         ) : matches.length === 0 ? (
-          <div className="mt-8 rounded-lg border border-dashed border-blue-200 bg-blue-50 p-6">
-            <p className="text-sm leading-6 text-slate-700">
-              No job matches yet.
+          <div className="mt-8 rounded-3xl border border-dashed border-cyan-300/30 bg-cyan-300/10 p-8">
+            <p className="text-xl font-black text-white">No job matches yet.</p>
+            <p className="mt-2 max-w-md text-sm leading-6 text-slate-400">
+              Compare a resume with a job description to create your first AI
+              match report.
             </p>
-            <Link
-              to="/job-matches/new"
-              className="mt-4 inline-flex min-h-10 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-            >
+            <Link to="/job-matches/new" className="primary-button mt-5 min-h-10 px-4 py-2">
               Create Match
             </Link>
           </div>
         ) : (
-          <div className="mt-8 grid gap-4">
+          <div className="mt-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/40">
+            <div className="hidden grid-cols-[minmax(0,1.25fr)_0.9fr_0.65fr_auto] gap-4 border-b border-slate-800 px-5 py-3 text-xs font-black uppercase tracking-[0.14em] text-slate-500 lg:grid">
+              <span>Role</span>
+              <span>Resume</span>
+              <span>Status</span>
+              <span className="text-right">Actions</span>
+            </div>
             {matches.map((match) => (
               <MatchHistoryItem
                 key={match.id}
@@ -133,46 +135,55 @@ function MatchHistoryItem({ deleting, match, onDelete }) {
   const scoreMeta = getJobMatchScoreMeta(score)
 
   return (
-    <article className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <article className="border-b border-slate-800 p-5 transition last:border-b-0 hover:bg-slate-900/60">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_0.9fr_0.65fr_auto] lg:items-center">
         <div className="min-w-0">
-          <h2 className="break-words text-base font-semibold text-slate-950">
-            {match.jobTitle}
-          </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            {match.companyName || 'Company unavailable'} · {match.resumeFileName}
-          </p>
-          <p className="mt-1 text-xs text-slate-500">
-            {formatDateTime(match.createdAt)}
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <span
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${scoreMeta.bg} ${scoreMeta.text}`}
-            >
-              Match {score ?? '--'} · {scoreMeta.label}
+          <div className="flex gap-4">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-cyan-300/20 bg-cyan-300/10 text-[11px] font-black text-cyan-100">
+              JM
             </span>
-            <span
-              className={`rounded-lg border px-3 py-1.5 text-xs font-semibold ${getStatusClasses(
-                match.status,
-              )}`}
-            >
-              {match.status}
-            </span>
+            <div className="min-w-0">
+              <h2 className="break-words text-base font-black text-white">
+                {match.jobTitle}
+              </h2>
+              <p className="mt-2 text-sm text-slate-400">
+                {match.companyName || 'Company unavailable'}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                {formatDateTime(match.createdAt)}
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-3">
-          <Link
-            to={`/job-matches/${match.id}`}
-            className="inline-flex min-h-10 items-center justify-center rounded-lg border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-100"
+        <p className="break-words text-sm font-semibold text-slate-400">
+          {match.resumeFileName}
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          <span
+            className={`rounded-xl px-3 py-1.5 text-xs font-bold ${scoreMeta.bg} ${scoreMeta.text}`}
           >
+            {score ?? '--'}% · {scoreMeta.label}
+          </span>
+          <span
+            className={`rounded-xl border px-3 py-1.5 text-xs font-bold ${getStatusClasses(
+              match.status,
+            )}`}
+          >
+            {match.status}
+          </span>
+        </div>
+
+        <div className="flex flex-wrap gap-3 lg:justify-end">
+          <Link to={`/job-matches/${match.id}`} className="primary-button min-h-10 px-4 py-2">
             View
           </Link>
           <button
             type="button"
             disabled={deleting}
             onClick={() => onDelete(match)}
-            className="inline-flex min-h-10 items-center justify-center rounded-lg border border-red-200 bg-white px-4 text-sm font-semibold text-red-700 transition hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-100 disabled:text-red-300"
+            className="danger-button min-h-10 px-4 py-2"
           >
             {deleting ? 'Deleting...' : 'Delete'}
           </button>

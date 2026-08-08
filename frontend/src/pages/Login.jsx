@@ -67,34 +67,35 @@ function Login() {
   }
 
   return (
-    <main className="grid min-h-screen bg-blue-50 px-5 py-8 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
-      <section className="hidden flex-col justify-between py-6 lg:flex">
+    <main className="ai-page grid min-h-screen px-5 py-8 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
+      <section className="ai-main hidden flex-col justify-between py-6 lg:flex">
         <BrandLogo />
         <div className="max-w-xl">
-          <p className="mb-4 text-sm font-semibold text-blue-700">
-            Welcome back
-          </p>
-          <h1 className="text-5xl font-bold leading-[1.08] text-slate-950">
-            Continue building a resume that reads clearly.
+          <p className="eyebrow mb-4">Welcome back</p>
+          <h1 className="text-5xl font-black leading-[1.08] text-white">
+            Continue building your{' '}
+            <span className="gradient-text">AI-powered career edge.</span>
           </h1>
-          <p className="mt-6 text-lg leading-8 text-slate-600">
-            Sign in to review your profile details, resume progress, and
-            dashboard placeholders for upcoming analysis tools.
+          <p className="mt-6 text-lg leading-8 text-slate-300">
+            Sign in to analyze resumes, monitor ATS signals, match against
+            roles, and reopen your resume chat history.
           </p>
         </div>
-        <p className="text-sm text-slate-500">
-          ResumeAI Pro keeps private resume work behind a token-based session.
+        <p className="max-w-md text-sm leading-6 text-slate-500">
+          ResumeAI Pro keeps private resume work inside your protected career
+          workspace.
         </p>
       </section>
 
-      <section className="mx-auto flex w-full max-w-md flex-col justify-center">
+      <section className="ai-main mx-auto flex w-full max-w-md flex-col justify-center">
         <div className="mb-8 lg:hidden">
           <BrandLogo />
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-xl shadow-blue-900/10 sm:p-8">
+        <div className="glass-card glow-card page-enter p-6 sm:p-8">
           <div>
-            <h2 className="text-3xl font-bold text-slate-950">Login</h2>
-            <p className="mt-2 text-slate-600">
+            <p className="eyebrow">Secure access</p>
+            <h2 className="mt-3 text-3xl font-black text-white">Login</h2>
+            <p className="mt-2 text-slate-400">
               Access your ResumeAI Pro dashboard.
             </p>
           </div>
@@ -131,7 +132,7 @@ function Login() {
               type="submit"
               disabled={submitting}
               aria-busy={submitting}
-              className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:bg-blue-300"
+              className="primary-button w-full"
             >
               {submitting ? (
                 <>
@@ -144,11 +145,11 @@ function Login() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-600">
+          <p className="mt-6 text-center text-sm text-slate-400">
             New to ResumeAI Pro?{' '}
             <Link
               to="/register"
-              className="font-semibold text-blue-700 transition hover:text-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-100"
+              className="font-bold text-cyan-200 transition hover:text-cyan-100 focus:outline-none focus:ring-4 focus:ring-cyan-300/20"
             >
               Create an account
             </Link>

@@ -3,54 +3,54 @@ export function getScoreMeta(score) {
     return {
       label: 'Pending',
       color: '#64748b',
-      bg: 'bg-slate-100',
-      text: 'text-slate-700',
+      bg: 'border border-slate-500/20 bg-slate-500/10',
+      text: 'text-slate-300',
     }
   }
 
   if (score < 50) {
     return {
       label: 'Needs improvement',
-      color: '#dc2626',
-      bg: 'bg-red-50',
-      text: 'text-red-700',
+      color: '#ef4444',
+      bg: 'border border-red-400/30 bg-red-500/10',
+      text: 'text-red-200',
     }
   }
 
   if (score < 70) {
     return {
       label: 'Fair',
-      color: '#ca8a04',
-      bg: 'bg-amber-50',
-      text: 'text-amber-700',
+      color: '#f59e0b',
+      bg: 'border border-amber-400/30 bg-amber-500/10',
+      text: 'text-amber-200',
     }
   }
 
   if (score < 85) {
     return {
       label: 'Good',
-      color: '#2563eb',
-      bg: 'bg-blue-50',
-      text: 'text-blue-700',
+      color: '#22d3ee',
+      bg: 'border border-cyan-300/30 bg-cyan-300/10',
+      text: 'text-cyan-100',
     }
   }
 
   return {
     label: 'Excellent',
-    color: '#059669',
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-700',
+    color: '#22c55e',
+    bg: 'border border-emerald-400/30 bg-emerald-500/10',
+    text: 'text-emerald-100',
   }
 }
 
 export function getStatusClasses(status) {
   if (status === 'COMPLETED') {
-    return 'border-emerald-200 bg-emerald-50 text-emerald-700'
+    return 'border-emerald-400/30 bg-emerald-500/10 text-emerald-100'
   }
 
   if (status === 'FAILED') {
-    return 'border-red-200 bg-red-50 text-red-700'
+    return 'border-red-400/30 bg-red-500/10 text-red-200'
   }
 
-  return 'border-amber-200 bg-amber-50 text-amber-700'
+  return 'border-amber-400/30 bg-amber-500/10 text-amber-200'
 }

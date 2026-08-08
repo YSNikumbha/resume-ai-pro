@@ -12,14 +12,22 @@ import { getApiErrorMessage } from '../utils/errorMessages'
 import { formatDateTime } from '../utils/resumeFormatters'
 
 const MAX_QUESTION_LENGTH = 1000
-const EXAMPLE_QUESTIONS = [
+const EMPTY_STATE_PROMPTS = [
+  'What are my strongest skills?',
+  'Summarize my experience',
+  'Which projects use Java?',
+  'What technologies are listed?',
+  'What education is mentioned?',
+  'What achievements are included?',
+]
+
+const INSUFFICIENT_CONTEXT_PROMPTS = [
   'What are my strongest technical skills?',
   'Summarize my experience.',
   'Which projects use Java?',
-  'What achievements are mentioned?',
-  'Which technologies appear in my projects?',
   'What education is listed?',
-  'What should I discuss in an interview?',
+  'What technologies appear in my projects?',
+  'What achievements are mentioned?',
 ]
 
 function ResumeChat() {
@@ -62,7 +70,7 @@ function ResumeChat() {
   const isQuestionTooLong = questionLength > MAX_QUESTION_LENGTH
 
   const statusLabel = useMemo(
-    () => String(indexInfo?.status || 'UNKNOWN').replaceAll('_', ' '),
+    () => formatIndexStatus(indexInfo?.status || 'UNKNOWN'),
     [indexInfo?.status],
   )
 
@@ -106,6 +114,11 @@ function ResumeChat() {
     }
   }
 
+  function handlePromptSelect(prompt) {
+    setQuestion(prompt)
+    setFieldError('')
+  }
+
   if (loading) {
     return (
       <AuthenticatedLayout>
@@ -119,21 +132,14 @@ function ResumeChat() {
   if (error && !indexInfo) {
     return (
       <AuthenticatedLayout>
-        <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5 sm:p-8">
+        <section className="glass-card p-6 sm:p-8">
           <StatusMessage>{error}</StatusMessage>
           <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={loadChat}
-              className="inline-flex min-h-10 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-            >
+            <button type="button" onClick={loadChat} className="primary-button min-h-10 px-4 py-2">
               Try again
             </button>
-            <Link
-              to={`/resumes/${resumeId}`}
-              className="inline-flex min-h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-            >
-              Back to resume
+            <Link to={`/resumes/${resumeId}`} className="secondary-button min-h-10 px-4 py-2">
+              Back to Resume
             </Link>
           </div>
         </section>
@@ -143,39 +149,41 @@ function ResumeChat() {
 
   return (
     <AuthenticatedLayout>
-      <div className="flex flex-col gap-6">
-        <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5 sm:p-8">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div className="page-enter mx-auto flex max-w-5xl flex-col gap-6">
+        <section className="border-b border-slate-800/80 pb-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-blue-700">Resume Chat</p>
-              <h1 className="mt-2 break-words text-3xl font-bold text-slate-950">
-                {indexInfo?.resumeFileName || 'Resume'}
+              <p className="eyebrow">Resume Chat</p>
+              <h1 className="mt-3 text-3xl font-black text-white">
+                Resume Chat
               </h1>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <span
-                  className={`rounded-lg border px-3 py-1.5 text-xs font-semibold ${getIndexStatusClasses(
-                    indexInfo?.status,
-                  )}`}
-                >
+              <p className="mt-2 break-words text-lg font-semibold text-slate-300">
+                {indexInfo?.resumeFileName || 'Resume'}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="status-pill status-cyan">
+                  Grounded in your resume
+                </span>
+                <span className={`status-pill ${getIndexStatusClasses(indexInfo?.status)}`}>
                   {statusLabel}
                 </span>
-                <span className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600">
+                <span className="status-pill status-slate">
                   {indexInfo?.chunkCount ?? 0} chunks
                 </span>
                 {indexInfo?.indexedAt ? (
-                  <span className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600">
+                  <span className="status-pill status-slate">
                     Indexed {formatDateTime(indexInfo.indexedAt)}
                   </span>
                 ) : null}
               </div>
+              <p className="mt-3 text-sm leading-6 text-slate-500">
+                Answers are generated only from retrieved resume sections.
+              </p>
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <Link
-                to={`/resumes/${resumeId}`}
-                className="inline-flex min-h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-              >
-                Back to resume
+              <Link to={`/resumes/${resumeId}`} className="secondary-button min-h-10 px-4 py-2">
+                Back to Resume
               </Link>
             </div>
           </div>
@@ -190,238 +198,341 @@ function ResumeChat() {
           </div>
         </section>
 
-        <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="space-y-5">
-            <article className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5">
-              <h2 className="text-lg font-semibold text-slate-950">
-                Ask a Question
-              </h2>
-              <div className="mt-4">
-                <div className="mb-2 flex items-center justify-between gap-3">
-                  <label
-                    htmlFor="resume-question"
-                    className="text-sm font-medium text-slate-700"
-                  >
-                    Question
-                  </label>
-                  <span
-                    className={`text-xs font-semibold ${
-                      isQuestionTooLong ? 'text-red-600' : 'text-slate-500'
-                    }`}
-                  >
-                    {questionLength}/{MAX_QUESTION_LENGTH}
-                  </span>
-                </div>
-                <textarea
-                  id="resume-question"
-                  value={question}
-                  onChange={(event) => {
-                    setQuestion(event.target.value)
-                    setFieldError('')
-                  }}
-                  onKeyDown={handleQuestionKeyDown}
-                  disabled={!canChat || asking}
-                  rows={4}
-                  className={`w-full resize-y rounded-lg border bg-white px-4 py-3 text-sm leading-7 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 disabled:bg-slate-100 ${
-                    fieldError ? 'border-red-300' : 'border-slate-200'
-                  }`}
-                  placeholder="Ask about skills, experience, projects, education, or achievements in this resume."
-                />
-                {fieldError ? (
-                  <p className="mt-2 text-sm text-red-600">{fieldError}</p>
-                ) : null}
-              </div>
-
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <button
-                  type="button"
-                  disabled={
-                    !canChat ||
-                    asking ||
-                    !question.trim() ||
-                    isQuestionTooLong
-                  }
-                  onClick={handleSend}
-                  className="inline-flex min-h-11 w-fit items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:bg-blue-300"
-                >
-                  {asking ? 'Generating...' : 'Send'}
-                </button>
-                {asking ? (
-                  <LoadingSpinner label="Retrieving resume sections" />
-                ) : null}
-              </div>
-
-              <div className="mt-5 flex flex-wrap gap-2">
-                {EXAMPLE_QUESTIONS.map((example) => (
-                  <button
-                    key={example}
-                    type="button"
-                    disabled={!canChat || asking}
-                    onClick={() => setQuestion(example)}
-                    className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-left text-xs font-semibold text-blue-700 transition hover:bg-blue-100 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400"
-                  >
-                    {example}
-                  </button>
-                ))}
-              </div>
-            </article>
-
-            <ChatResponseCard response={displayedResponse} />
+        <section className="glass-card overflow-hidden">
+          <div className="border-b border-slate-800 px-5 py-4 sm:px-6">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-lg font-black text-white">Conversation</h2>
+              <span className="status-pill status-cyan">RAG grounded</span>
+            </div>
           </div>
 
-          <aside className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5">
+          <div className="min-h-[24rem] space-y-5 px-5 py-6 sm:px-6">
+              {!displayedResponse && !asking ? (
+                <div className="grid min-h-[18rem] place-items-center rounded-2xl border border-dashed border-slate-700 bg-slate-900/50 p-8 text-center">
+                  <div>
+                    <p className="mx-auto grid h-12 w-12 place-items-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-sm font-black text-cyan-100">
+                      AI
+                    </p>
+                    <h3 className="mt-5 text-xl font-black text-white">
+                      Ask your resume anything.
+                    </h3>
+                    <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-400">
+                      Explore your skills, experience, projects, education,
+                      technologies, and achievements.
+                    </p>
+                    <div className="mx-auto mt-5 flex max-w-2xl flex-wrap justify-center gap-2">
+                      {EMPTY_STATE_PROMPTS.map((example) => (
+                        <button
+                          key={example}
+                          type="button"
+                          disabled={!canChat || asking}
+                          onClick={() => handlePromptSelect(example)}
+                          className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-left text-xs font-bold text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-300/20 focus:outline-none focus:ring-4 focus:ring-cyan-300/20 disabled:border-slate-700/60 disabled:bg-slate-800/40 disabled:text-slate-500"
+                        >
+                          {example}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
+              {displayedResponse ? (
+                <ChatResponseCard
+                  onSelectPrompt={handlePromptSelect}
+                  response={displayedResponse}
+                />
+              ) : null}
+
+              {asking ? (
+                <div className="page-enter flex justify-start">
+                  <div className="max-w-[86%] rounded-3xl rounded-bl-md border border-slate-700/70 bg-slate-900/80 px-5 py-4 text-sm text-slate-200">
+                    <p className="font-bold text-cyan-100">
+                      Searching relevant resume sections...
+                      <span className="loading-dots ml-1" aria-hidden="true">
+                        <span />
+                        <span />
+                        <span />
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+          </div>
+
+          <div className="sticky bottom-0 border-t border-slate-800 bg-slate-950/90 p-4 backdrop-blur-2xl sm:p-5">
+            <div className="mb-2 flex items-center justify-between gap-3">
+                <label htmlFor="resume-question" className="ai-label mb-0">
+                  Question
+                </label>
+                <span
+                  className={`text-xs font-black ${
+                    isQuestionTooLong ? 'text-red-300' : 'text-slate-500'
+                  }`}
+                >
+                  {questionLength}/{MAX_QUESTION_LENGTH}
+                </span>
+            </div>
+            <textarea
+              id="resume-question"
+              value={question}
+              onChange={(event) => {
+                setQuestion(event.target.value)
+                setFieldError('')
+              }}
+              onKeyDown={handleQuestionKeyDown}
+              disabled={!canChat || asking}
+              rows={2}
+              className={`ai-textarea min-h-20 rounded-2xl text-sm leading-7 disabled:opacity-60 ${
+                fieldError ? '!border-red-400/70' : ''
+              }`}
+              placeholder="Ask about skills, projects, experience, education, or achievements..."
+            />
+            {fieldError ? (
+              <p className="mt-2 text-sm font-semibold text-red-300">{fieldError}</p>
+            ) : null}
+
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <button
+                type="button"
+                disabled={
+                  !canChat ||
+                  asking ||
+                  !question.trim() ||
+                  isQuestionTooLong
+                }
+                onClick={handleSend}
+                className="primary-button w-full sm:w-auto"
+              >
+                {asking ? 'Generating...' : 'Send'}
+              </button>
+              {asking ? (
+                <LoadingSpinner label="Searching relevant resume sections..." />
+              ) : null}
+            </div>
+          </div>
+        </section>
+
+        {history.length > 0 ? (
+          <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-slate-950">
-                Chat History
-              </h2>
-              <span className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
-                {history.length}
-              </span>
+              <h2 className="text-lg font-black text-white">Chat History</h2>
+              <span className="status-pill status-slate">{history.length}</span>
             </div>
 
-            {history.length === 0 ? (
-              <div className="mt-5 rounded-lg border border-dashed border-blue-200 bg-blue-50 p-5 text-sm leading-6 text-slate-600">
-                No resume chat messages yet.
-              </div>
-            ) : (
-              <div className="mt-5 grid gap-3">
-                {history.map((item) => (
-                  <button
-                    key={item.id || `${item.createdAt}-${item.question}`}
-                    type="button"
-                    onClick={() => setActiveResponse(item)}
-                    className={`rounded-lg border p-4 text-left transition focus:outline-none focus:ring-4 focus:ring-blue-100 ${
-                      activeResponse?.id === item.id
-                        ? 'border-blue-300 bg-blue-50'
-                        : 'border-slate-200 bg-slate-50 hover:border-blue-200'
-                    }`}
-                  >
-                    <p className="line-clamp-2 text-sm font-semibold text-slate-950">
-                      {item.question}
-                    </p>
-                    <p className="mt-2 text-xs text-slate-500">
-                      {formatDateTime(item.createdAt)}
-                    </p>
-                    {item.insufficientContext ? (
-                      <span className="mt-3 inline-flex rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
-                        Insufficient context
-                      </span>
-                    ) : null}
-                  </button>
-                ))}
-              </div>
-            )}
-          </aside>
-        </section>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {history.map((item) => (
+                <button
+                  key={item.id || `${item.createdAt}-${item.question}`}
+                  type="button"
+                  onClick={() => setActiveResponse(item)}
+                  className={`rounded-2xl border p-4 text-left transition focus:outline-none focus:ring-4 focus:ring-cyan-300/20 ${
+                    activeResponse?.id === item.id
+                      ? 'border-cyan-300/40 bg-cyan-300/10'
+                      : 'border-slate-700/60 bg-slate-950/50 hover:border-indigo-300/40'
+                  }`}
+                >
+                  <p className="line-clamp-2 text-sm font-black text-white">
+                    {item.question}
+                  </p>
+                  <p className="mt-2 text-xs text-slate-500">
+                    {formatDateTime(item.createdAt)}
+                  </p>
+                  {item.insufficientContext ? (
+                    <span className="status-pill status-amber mt-3">
+                      Insufficient context
+                    </span>
+                  ) : null}
+                </button>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
     </AuthenticatedLayout>
   )
 }
 
-function ChatResponseCard({ response }) {
-  if (!response) {
-    return (
-      <article className="rounded-lg border border-dashed border-blue-200 bg-blue-50 p-6 text-sm leading-6 text-slate-600">
-        Ask a question to retrieve relevant resume sections and generate an answer.
-      </article>
-    )
-  }
-
+function ChatResponseCard({ onSelectPrompt, response }) {
   return (
-    <article className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-slate-950">Answer</h2>
-          <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
-            Generated from retrieved resume sections.
-          </p>
+    <div className="space-y-5">
+      <div className="page-enter flex justify-end">
+        <div className="max-w-[86%] rounded-3xl rounded-br-md bg-gradient-to-br from-indigo-500 to-cyan-400 px-5 py-4 text-sm font-semibold leading-7 text-white shadow-lg shadow-indigo-950/30">
+          {response.question}
         </div>
-        <span
-          className={`w-fit rounded-lg px-3 py-1.5 text-xs font-semibold ${
-            response.insufficientContext
-              ? 'bg-amber-50 text-amber-700'
-              : 'bg-emerald-50 text-emerald-700'
-          }`}
-        >
-          {response.insufficientContext ? 'Insufficient context' : 'Answered'}
-        </span>
       </div>
 
-      <div className="mt-5 rounded-lg border border-slate-200 bg-slate-50 p-5">
-        <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
-          {response.answer}
-        </p>
+      <div className="page-enter flex justify-start">
+        <div className="w-full rounded-2xl border border-slate-700/70 bg-slate-900/80 px-5 py-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-sm font-black text-white">ResumeAI</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                Resume-grounded answer
+              </p>
+            </div>
+            <span
+              className={`status-pill ${
+                response.insufficientContext ? 'status-amber' : 'status-green'
+              }`}
+            >
+              {response.insufficientContext
+                ? 'Insufficient context'
+                : 'Resume-grounded answer'}
+            </span>
+          </div>
+          {response.insufficientContext ? (
+            <InsufficientContextPanel onSelectPrompt={onSelectPrompt} />
+          ) : (
+            <>
+              <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-300">
+                {response.answer}
+              </p>
+              <p className="mt-4 text-xs leading-5 text-slate-500">
+                Answers are generated only from retrieved resume content and may
+                miss information if the resume is incomplete.
+              </p>
+            </>
+          )}
+        </div>
       </div>
 
-      <p className="mt-4 text-xs leading-5 text-slate-500">
-        Answers are generated only from retrieved resume content and may miss
-        information if the resume is incomplete.
-      </p>
-
-      <SourceCards sources={response.sources || []} />
-    </article>
+      <SourceCards
+        insufficientContext={response.insufficientContext}
+        sources={response.sources || []}
+      />
+    </div>
   )
 }
 
-function SourceCards({ sources }) {
+function InsufficientContextPanel({ onSelectPrompt }) {
+  return (
+    <div className="mt-4 rounded-2xl border border-amber-400/25 bg-amber-500/10 p-4">
+      <h3 className="font-black text-amber-100">
+        This question goes beyond your resume.
+      </h3>
+      <p className="mt-2 text-sm leading-7 text-amber-50/85">
+        Resume Chat answers questions using only information retrieved from your
+        uploaded resume. Try asking about your skills, experience, education,
+        projects, technologies, or achievements.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {INSUFFICIENT_CONTEXT_PROMPTS.map((prompt) => (
+          <button
+            key={prompt}
+            type="button"
+            onClick={() => onSelectPrompt(prompt)}
+            className="rounded-full border border-amber-300/25 bg-slate-950/35 px-3 py-2 text-left text-xs font-bold text-amber-100 transition hover:border-amber-300/50 hover:bg-amber-300/10 focus:outline-none focus:ring-4 focus:ring-amber-300/20"
+          >
+            {prompt}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function SourceCards({ insufficientContext = false, sources }) {
+  const [expandedSources, setExpandedSources] = useState({})
+
   if (!sources.length) {
     return (
-      <div className="mt-5 rounded-lg border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
-        No source sections were returned.
+      <div className="rounded-2xl border border-dashed border-slate-700/60 bg-slate-950/50 p-4 text-sm text-slate-500">
+        {insufficientContext
+          ? 'No relevant resume sections were found.'
+          : 'No source sections were returned.'}
       </div>
     )
   }
 
+  function toggleSource(key) {
+    setExpandedSources((current) => ({
+      ...current,
+      [key]: !current[key],
+    }))
+  }
+
   return (
-    <div className="mt-6 grid gap-3 md:grid-cols-2">
-      {sources.map((source, index) => (
-        <article
-          key={`${source.chunkIndex}-${index}`}
-          className="rounded-lg border border-slate-200 bg-white p-4"
-        >
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">
-              Source {index + 1}
-            </span>
-            <span className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
-              {source.sectionName || 'GENERAL'}
-            </span>
-            <span className="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
-              {formatSimilarity(source.similarityScore)}
-            </span>
-          </div>
-          <p className="mt-3 text-sm leading-6 text-slate-700">
-            {source.excerpt || 'Excerpt unavailable.'}
-          </p>
-        </article>
-      ))}
+    <div className="grid gap-3 md:grid-cols-2">
+      {sources.map((source, index) => {
+        const key = `${source.chunkIndex}-${index}`
+        const isExpanded = Boolean(expandedSources[key])
+        const excerpt = source.excerpt || 'Excerpt unavailable.'
+        const shouldCollapse = excerpt.length > 220
+        const displayedExcerpt =
+          shouldCollapse && !isExpanded ? `${excerpt.slice(0, 220)}...` : excerpt
+
+        return (
+          <article
+            key={key}
+            className="rounded-2xl border border-cyan-300/20 bg-slate-950/50 p-4"
+          >
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="status-pill status-cyan">Source {index + 1}</span>
+              <span className="status-pill status-slate">
+                Section: {source.sectionName || 'GENERAL'}
+              </span>
+              <span className="status-pill status-green">
+                Similarity: {formatSimilarity(source.similarityScore)}
+              </span>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-slate-300">
+              {displayedExcerpt}
+            </p>
+            {shouldCollapse ? (
+              <button
+                type="button"
+                onClick={() => toggleSource(key)}
+                className="ghost-button mt-3 min-h-9 px-3 py-2"
+              >
+                {isExpanded ? 'Show less' : 'Show more'}
+              </button>
+            ) : null}
+          </article>
+        )
+      })}
     </div>
   )
 }
 
 function formatSimilarity(score) {
   if (!Number.isFinite(score)) {
-    return 'Similarity unavailable'
+    return 'Unavailable'
   }
 
   const percentage = score <= 1 ? score * 100 : score
-  return `${Math.round(Math.min(100, Math.max(0, percentage)))}% match`
+  return `${Math.round(Math.min(100, Math.max(0, percentage)))}%`
 }
 
 function getIndexStatusClasses(status) {
   if (status === 'INDEXED') {
-    return 'border-emerald-200 bg-emerald-50 text-emerald-700'
+    return 'status-green'
   }
 
   if (status === 'FAILED') {
-    return 'border-red-200 bg-red-50 text-red-700'
+    return 'status-red'
   }
 
   if (status === 'INDEXING') {
-    return 'border-amber-200 bg-amber-50 text-amber-700'
+    return 'status-amber'
   }
 
-  return 'border-slate-200 bg-slate-50 text-slate-600'
+  return 'status-slate'
+}
+
+function formatIndexStatus(status) {
+  switch (status) {
+    case 'INDEXED':
+      return 'Indexed'
+    case 'INDEXING':
+      return 'Indexing'
+    case 'FAILED':
+      return 'Failed'
+    case 'NOT_INDEXED':
+      return 'Not indexed'
+    default:
+      return 'Unknown'
+  }
 }
 
 export default ResumeChat

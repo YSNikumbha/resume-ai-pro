@@ -70,34 +70,35 @@ function Register() {
   }
 
   return (
-    <main className="grid min-h-screen bg-blue-50 px-5 py-8 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
-      <section className="hidden flex-col justify-between py-6 lg:flex">
+    <main className="ai-page grid min-h-screen px-5 py-8 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
+      <section className="ai-main hidden flex-col justify-between py-6 lg:flex">
         <BrandLogo />
         <div className="max-w-xl">
-          <p className="mb-4 text-sm font-semibold text-blue-700">
-            Start strong
-          </p>
-          <h1 className="text-5xl font-bold leading-[1.08] text-slate-950">
-            Create a clean account for your resume workflow.
+          <p className="eyebrow mb-4">Start strong</p>
+          <h1 className="text-5xl font-black leading-[1.08] text-white">
+            Create your modern{' '}
+            <span className="gradient-text">resume intelligence workspace.</span>
           </h1>
-          <p className="mt-6 text-lg leading-8 text-slate-600">
-            Register once, then keep your profile, activity, and future resume
-            intelligence tools in one place.
+          <p className="mt-6 text-lg leading-8 text-slate-300">
+            Register once, then keep uploads, analyses, job matches, and resume
+            chat in one polished AI workspace.
           </p>
         </div>
-        <p className="text-sm text-slate-500">
-          Your dashboard is protected and ready for upcoming resume workflows.
+        <p className="max-w-md text-sm leading-6 text-slate-500">
+          Your dashboard is protected and ready for resume analysis, matching,
+          and source-grounded chat.
         </p>
       </section>
 
-      <section className="mx-auto flex w-full max-w-md flex-col justify-center">
+      <section className="ai-main mx-auto flex w-full max-w-md flex-col justify-center">
         <div className="mb-8 lg:hidden">
           <BrandLogo />
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-xl shadow-blue-900/10 sm:p-8">
+        <div className="glass-card glow-card page-enter p-6 sm:p-8">
           <div>
-            <h2 className="text-3xl font-bold text-slate-950">Register</h2>
-            <p className="mt-2 text-slate-600">
+            <p className="eyebrow">Create account</p>
+            <h2 className="mt-3 text-3xl font-black text-white">Register</h2>
+            <p className="mt-2 text-slate-400">
               Create your ResumeAI Pro account.
             </p>
           </div>
@@ -153,7 +154,7 @@ function Register() {
               type="submit"
               disabled={submitting}
               aria-busy={submitting}
-              className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:bg-blue-300"
+              className="primary-button w-full"
             >
               {submitting ? (
                 <>
@@ -166,11 +167,11 @@ function Register() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-600">
+          <p className="mt-6 text-center text-sm text-slate-400">
             Already have an account?{' '}
             <Link
               to="/login"
-              className="font-semibold text-blue-700 transition hover:text-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-100"
+              className="font-bold text-cyan-200 transition hover:text-cyan-100 focus:outline-none focus:ring-4 focus:ring-cyan-300/20"
             >
               Login
             </Link>

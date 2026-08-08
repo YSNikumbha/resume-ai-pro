@@ -134,22 +134,20 @@ function CreateJobMatch() {
 
   return (
     <AuthenticatedLayout>
-      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5 sm:p-8">
+      <section className="glass-card glow-card page-enter p-6 sm:p-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-sm font-semibold text-blue-700">Job Matching</p>
-            <h1 className="mt-2 text-3xl font-bold text-slate-950">
+            <p className="eyebrow">Job Matching</p>
+            <h1 className="mt-3 text-3xl font-black text-white">
               Match Resume With Job
             </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-              Paste the complete job description for a more accurate comparison.
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">
+              Paste the full opportunity details so AI can compare skills,
+              experience, education, and keywords with your selected resume.
             </p>
           </div>
-          <Link
-            to="/job-matches"
-            className="inline-flex min-h-10 w-fit items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-          >
-            Match history
+          <Link to="/job-matches" className="secondary-button min-h-10 w-fit px-4 py-2">
+            Match History
           </Link>
         </div>
 
@@ -162,83 +160,85 @@ function CreateJobMatch() {
             <LoadingSpinner label="Loading resumes" size="lg" />
           </div>
         ) : resumes.length === 0 ? (
-          <div className="mt-8 rounded-lg border border-dashed border-blue-200 bg-blue-50 p-6">
-            <p className="text-sm leading-6 text-slate-700">
+          <div className="mt-8 rounded-3xl border border-dashed border-cyan-300/30 bg-cyan-300/10 p-8">
+            <p className="text-lg font-black text-white">No resumes available.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
               Upload a PDF resume before creating a job match.
             </p>
-            <Link
-              to="/resumes/upload"
-              className="mt-4 inline-flex min-h-10 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-            >
+            <Link to="/resumes/upload" className="primary-button mt-5 min-h-10 px-4 py-2">
               Upload Resume
             </Link>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-8 grid gap-6">
-            <div>
-              <label
-                htmlFor="resumeId"
-                className="mb-2 block text-sm font-medium text-slate-700"
-              >
-                Resume
-              </label>
-              <select
-                id="resumeId"
-                value={form.resumeId}
-                onChange={(event) => updateField('resumeId', event.target.value)}
-                className={`h-12 w-full rounded-lg border bg-white px-4 text-slate-950 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100 ${
-                  fieldErrors.resumeId ? 'border-red-300' : 'border-slate-200'
-                }`}
-              >
-                {resumes.map((resume) => (
-                  <option key={resume.id} value={resume.id}>
-                    {resume.originalFileName}
-                  </option>
-                ))}
-              </select>
-              {fieldErrors.resumeId ? (
-                <p className="mt-2 text-sm text-red-600">
-                  {fieldErrors.resumeId}
-                </p>
-              ) : null}
-              {selectedResume ? (
-                <p className="mt-2 text-sm text-slate-500">
-                  Uploaded {formatDateTime(selectedResume.uploadedAt)}
-                </p>
-              ) : null}
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <TextField
-                error={fieldErrors.title}
-                id="title"
-                label="Job title"
-                onChange={(value) => updateField('title', value)}
-                placeholder="Senior Java Developer"
-                value={form.title}
-              />
-              <TextField
-                error={fieldErrors.companyName}
-                id="companyName"
-                label="Company name"
-                onChange={(value) => updateField('companyName', value)}
-                placeholder="Acme"
-                value={form.companyName}
-              />
-            </div>
-
-            <div>
-              <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                <label
-                  htmlFor="description"
-                  className="text-sm font-medium text-slate-700"
+          <form onSubmit={handleSubmit} className="mt-8 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+            <div className="space-y-6">
+              <div className="glass-card p-5">
+                <label htmlFor="resumeId" className="ai-label">
+                  Resume
+                </label>
+                <select
+                  id="resumeId"
+                  value={form.resumeId}
+                  onChange={(event) => updateField('resumeId', event.target.value)}
+                  className={`ai-select ${
+                    fieldErrors.resumeId ? '!border-red-400/70' : ''
+                  }`}
                 >
+                  {resumes.map((resume) => (
+                    <option key={resume.id} value={resume.id}>
+                      {resume.originalFileName}
+                    </option>
+                  ))}
+                </select>
+                {fieldErrors.resumeId ? (
+                  <p className="mt-2 text-sm font-semibold text-red-300">
+                    {fieldErrors.resumeId}
+                  </p>
+                ) : null}
+                {selectedResume ? (
+                  <div className="mt-4 rounded-2xl border border-slate-700/60 bg-slate-950/50 p-4">
+                    <p className="text-sm font-black text-white">
+                      {selectedResume.originalFileName}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-500">
+                      Uploaded {formatDateTime(selectedResume.uploadedAt)}
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="glass-card p-5">
+                <TextField
+                  error={fieldErrors.title}
+                  id="title"
+                  label="Job title"
+                  onChange={(value) => updateField('title', value)}
+                  placeholder="Senior Java Developer"
+                  value={form.title}
+                />
+              </div>
+
+              <div className="glass-card p-5">
+                <TextField
+                  error={fieldErrors.companyName}
+                  id="companyName"
+                  label="Company name"
+                  onChange={(value) => updateField('companyName', value)}
+                  placeholder="Acme"
+                  value={form.companyName}
+                />
+              </div>
+            </div>
+
+            <div className="glass-card p-5">
+              <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                <label htmlFor="description" className="ai-label mb-0">
                   Job description
                 </label>
                 <span
-                  className={`text-xs font-semibold ${
+                  className={`text-xs font-black ${
                     descriptionLength > DESCRIPTION_MAX_LENGTH
-                      ? 'text-red-600'
+                      ? 'text-red-300'
                       : 'text-slate-500'
                   }`}
                 >
@@ -252,32 +252,44 @@ function CreateJobMatch() {
                   updateField('description', event.target.value)
                 }
                 placeholder="Paste the full role description, responsibilities, required skills, preferred skills, qualifications, and company context."
-                rows={14}
-                className={`w-full resize-y rounded-lg border bg-white px-4 py-3 text-sm leading-7 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 ${
-                  fieldErrors.description ? 'border-red-300' : 'border-slate-200'
+                rows={17}
+                className={`ai-textarea min-h-[28rem] text-sm leading-7 ${
+                  fieldErrors.description ? '!border-red-400/70' : ''
                 }`}
               />
               {fieldErrors.description ? (
-                <p className="mt-2 text-sm text-red-600">
+                <p className="mt-2 text-sm font-semibold text-red-300">
                   {fieldErrors.description}
                 </p>
               ) : null}
-            </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <button
-                type="submit"
-                disabled={submitting || resumes.length === 0}
-                className="inline-flex min-h-11 w-fit items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:bg-blue-300"
-              >
-                {submitting ? 'Matching...' : 'Create Match'}
-              </button>
-              {submitting ? (
-                <p className="text-sm text-slate-600">
-                  Comparing your resume with this role. This may take a few
-                  seconds.
-                </p>
-              ) : null}
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <button
+                  type="submit"
+                  disabled={submitting || resumes.length === 0}
+                  aria-busy={submitting}
+                  className="primary-button w-full sm:w-auto"
+                >
+                  {submitting ? (
+                    <>
+                      <LoadingSpinner label="" size="sm" />
+                      Matching...
+                    </>
+                  ) : (
+                    'Create Match'
+                  )}
+                </button>
+                {submitting ? (
+                  <p className="text-sm font-semibold text-slate-300">
+                    AI is comparing your resume with this opportunity
+                    <span className="loading-dots ml-1 text-cyan-200" aria-hidden="true">
+                      <span />
+                      <span />
+                      <span />
+                    </span>
+                  </p>
+                ) : null}
+              </div>
             </div>
           </form>
         )}
@@ -289,7 +301,7 @@ function CreateJobMatch() {
 function TextField({ error, id, label, onChange, placeholder, value }) {
   return (
     <div>
-      <label htmlFor={id} className="mb-2 block text-sm font-medium text-slate-700">
+      <label htmlFor={id} className="ai-label">
         {label}
       </label>
       <input
@@ -298,11 +310,9 @@ function TextField({ error, id, label, onChange, placeholder, value }) {
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className={`h-12 w-full rounded-lg border bg-white px-4 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 ${
-          error ? 'border-red-300' : 'border-slate-200'
-        }`}
+        className={`ai-input ${error ? '!border-red-400/70' : ''}`}
       />
-      {error ? <p className="mt-2 text-sm text-red-600">{error}</p> : null}
+      {error ? <p className="mt-2 text-sm font-semibold text-red-300">{error}</p> : null}
     </div>
   )
 }

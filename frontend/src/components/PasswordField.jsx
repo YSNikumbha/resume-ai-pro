@@ -14,13 +14,14 @@ function PasswordField({
   return (
     <div>
       <div className="mb-2 flex items-center justify-between gap-4">
-        <label htmlFor={id} className="text-sm font-medium text-slate-700">
+        <label htmlFor={id} className="ai-label mb-0">
           {label}
         </label>
         <button
           type="button"
           onClick={onToggleVisibility}
-          className="text-sm font-semibold text-blue-700 transition hover:text-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-100"
+          className="rounded-full border border-slate-700/70 px-3 py-1 text-xs font-bold text-cyan-200 transition hover:border-cyan-300/50 hover:bg-cyan-300/10 focus:outline-none focus:ring-4 focus:ring-cyan-300/20"
+          aria-label={showPassword ? 'Hide password' : 'Show password'}
         >
           {showPassword ? 'Hide' : 'Show'}
         </button>
@@ -35,12 +36,12 @@ function PasswordField({
         aria-invalid={Boolean(error)}
         aria-describedby={describedBy}
         onChange={onChange}
-        className={`h-12 w-full rounded-lg border bg-white px-4 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 ${
-          error ? 'border-red-300' : 'border-slate-200'
+        className={`ai-input ${
+          error ? '!border-red-400/70 !shadow-[0_0_0_4px_rgba(239,68,68,0.12)]' : ''
         }`}
       />
       {error ? (
-        <p id={describedBy} className="mt-2 text-sm text-red-600">
+        <p id={describedBy} className="mt-2 text-sm font-semibold text-red-300">
           {error}
         </p>
       ) : null}

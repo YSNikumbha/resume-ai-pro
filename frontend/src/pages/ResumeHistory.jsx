@@ -70,23 +70,19 @@ function ResumeHistory() {
 
   return (
     <AuthenticatedLayout>
-      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5 sm:p-8">
+      <section className="page-enter">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="text-sm font-semibold text-blue-700">
-              Resume History
-            </p>
-            <h1 className="mt-2 text-3xl font-bold text-slate-950">
-              Your uploaded resumes
+            <p className="eyebrow">Resume History</p>
+            <h1 className="mt-3 text-3xl font-black text-white">
+              Your career workspace
             </h1>
-            <p className="mt-2 text-slate-600">
-              Review PDF uploads and their extracted text previews.
+            <p className="mt-2 text-slate-400">
+              Review uploaded PDFs, resume status, analysis readiness, and chat
+              index state.
             </p>
           </div>
-          <Link
-            to="/resumes/upload"
-            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-          >
+          <Link to="/resumes/upload" className="primary-button min-h-11 px-5">
             Upload Resume
           </Link>
         </div>
@@ -101,59 +97,135 @@ function ResumeHistory() {
             <LoadingSpinner label="Loading resumes" size="lg" />
           </div>
         ) : resumes.length === 0 ? (
-          <div className="mt-8 rounded-lg border border-dashed border-blue-200 bg-blue-50 p-8 text-center">
-            <h2 className="text-lg font-semibold text-slate-950">
-              No resumes uploaded yet
-            </h2>
-            <p className="mt-2 text-sm text-slate-600">
-              Upload your first PDF resume to start building your history.
+          <div className="mt-8 rounded-3xl border border-dashed border-cyan-300/30 bg-cyan-300/10 p-8 text-center">
+            <p className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500/40 to-cyan-400/20 text-sm font-black text-cyan-100">
+              PDF
             </p>
+            <h2 className="mt-5 text-xl font-black text-white">
+              Your career workspace is empty.
+            </h2>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-400">
+              Upload your first PDF resume to unlock analysis, matching, and
+              resume chat.
+            </p>
+            <Link to="/resumes/upload" className="primary-button mt-6 min-h-11 px-5">
+              Upload Your First Resume
+            </Link>
           </div>
         ) : (
-          <div className="mt-8 grid gap-4">
+          <div className="mt-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/40">
+            <div className="hidden grid-cols-[minmax(0,1.4fr)_0.65fr_0.7fr_auto] gap-4 border-b border-slate-800 px-5 py-3 text-xs font-black uppercase tracking-[0.14em] text-slate-500 lg:grid">
+              <span>Resume</span>
+              <span>Uploaded</span>
+              <span>Status</span>
+              <span className="text-right">Actions</span>
+            </div>
             {resumes.map((resume) => (
-              <article
+              <ResumeCard
                 key={resume.id}
-                className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm shadow-blue-900/5"
-              >
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="min-w-0">
-                    <h2 className="break-words text-lg font-semibold text-slate-950">
-                      {resume.originalFileName}
-                    </h2>
-                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-500">
-                      <span>{formatFileSize(resume.fileSize)}</span>
-                      <span>{formatDateTime(resume.uploadedAt)}</span>
-                    </div>
-                    <p className="mt-4 line-clamp-3 text-sm leading-6 text-slate-600">
-                      {resume.extractedTextPreview}
-                    </p>
-                  </div>
-
-                  <div className="flex shrink-0 gap-2">
-                    <Link
-                      to={`/resumes/${resume.id}`}
-                      className="inline-flex min-h-10 items-center justify-center rounded-lg border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-100"
-                    >
-                      View
-                    </Link>
-                    <button
-                      type="button"
-                      disabled={deletingId === resume.id}
-                      onClick={() => handleDelete(resume)}
-                      className="inline-flex min-h-10 items-center justify-center rounded-lg border border-red-200 bg-white px-4 text-sm font-semibold text-red-700 transition hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-100 disabled:text-red-300"
-                    >
-                      {deletingId === resume.id ? 'Deleting...' : 'Delete'}
-                    </button>
-                  </div>
-                </div>
-              </article>
+                deleting={deletingId === resume.id}
+                resume={resume}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         )}
       </section>
     </AuthenticatedLayout>
   )
+}
+
+function ResumeCard({ deleting, onDelete, resume }) {
+  const indexStatus = resume.indexStatus || 'NOT_INDEXED'
+
+  return (
+    <article className="border-b border-slate-800 p-5 transition last:border-b-0 hover:bg-slate-900/60">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_0.65fr_0.7fr_auto] lg:items-center">
+        <div className="min-w-0">
+          <div className="flex items-start gap-4">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-red-300/20 bg-red-500/10 text-[11px] font-black text-red-100">
+              PDF
+            </span>
+            <div className="min-w-0">
+              <h2 className="break-words text-base font-black text-white">
+                {resume.originalFileName}
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">
+                {formatFileSize(resume.fileSize)}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-sm font-semibold text-slate-400">
+          <span className="lg:hidden">Uploaded </span>
+          {formatDateTime(resume.uploadedAt)}
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          <span className="status-pill status-cyan">Analysis ready</span>
+          <span className={`status-pill ${getIndexStatusTone(indexStatus)}`}>
+            {formatIndexStatus(indexStatus)}
+          </span>
+        </div>
+
+        <div className="flex shrink-0 flex-wrap gap-2 lg:justify-end">
+          <Link to={`/resumes/${resume.id}`} className="primary-button min-h-10 px-4 py-2">
+            View
+          </Link>
+          <Link to={`/resumes/${resume.id}`} className="secondary-button min-h-10 px-4 py-2">
+            Analyze
+          </Link>
+          <Link
+            to={`/job-matches/new?resumeId=${resume.id}`}
+            className="secondary-button min-h-10 px-4 py-2"
+          >
+            Match
+          </Link>
+          <Link
+            to={`/resumes/${resume.id}/chat`}
+            className="secondary-button min-h-10 px-4 py-2"
+          >
+            Chat
+          </Link>
+          <button
+            type="button"
+            disabled={deleting}
+            onClick={() => onDelete(resume)}
+            className="danger-button min-h-10 px-4 py-2"
+          >
+            {deleting ? 'Deleting...' : 'Delete'}
+          </button>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+function getIndexStatusTone(status) {
+  switch (status) {
+    case 'INDEXED':
+      return 'status-green'
+    case 'INDEXING':
+      return 'status-cyan'
+    case 'FAILED':
+      return 'status-red'
+    default:
+      return 'status-slate'
+  }
+}
+
+function formatIndexStatus(status) {
+  switch (status) {
+    case 'INDEXED':
+      return 'Indexed'
+    case 'INDEXING':
+      return 'Indexing'
+    case 'FAILED':
+      return 'Index failed'
+    default:
+      return 'Not indexed'
+  }
 }
 
 export default ResumeHistory

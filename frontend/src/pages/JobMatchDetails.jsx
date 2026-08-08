@@ -83,20 +83,13 @@ function JobMatchDetails() {
   if (error && !match) {
     return (
       <AuthenticatedLayout>
-        <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5 sm:p-8">
+        <section className="glass-card p-6 sm:p-8">
           <StatusMessage>{error}</StatusMessage>
           <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={loadMatch}
-              className="inline-flex min-h-10 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-            >
+            <button type="button" onClick={loadMatch} className="primary-button min-h-10 px-4 py-2">
               Try again
             </button>
-            <Link
-              to="/job-matches"
-              className="inline-flex min-h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-            >
+            <Link to="/job-matches" className="secondary-button min-h-10 px-4 py-2">
               Job match history
             </Link>
           </div>
@@ -114,47 +107,44 @@ function JobMatchDetails() {
 
   return (
     <AuthenticatedLayout>
-      <div className="flex flex-col gap-6">
-        <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5 sm:p-8">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div className="page-enter flex flex-col gap-6">
+        <section className="glass-card glow-card p-6 sm:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-blue-700">Job Match</p>
-              <h1 className="mt-2 break-words text-3xl font-bold text-slate-950">
+              <p className="eyebrow">Job Match</p>
+              <h1 className="mt-3 break-words text-3xl font-black text-white sm:text-4xl">
                 {match.jobTitle}
               </h1>
-              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-500">
-                <span>{match.companyName || 'Company unavailable'}</span>
-                <span>{match.resumeFileName}</span>
-                <span>{formatDateTime(match.createdAt)}</span>
-                <span>{match.modelName || 'Model unavailable'}</span>
-              </div>
+              <p className="mt-2 text-lg font-semibold text-slate-400">
+                {match.companyName || 'Company unavailable'}
+              </p>
+              <dl className="mt-5 grid gap-3 text-sm md:grid-cols-2 xl:grid-cols-4">
+                <MetaItem label="Resume" value={match.resumeFileName} />
+                <MetaItem label="Date" value={formatDateTime(match.createdAt)} />
+                <MetaItem label="Model" value={match.modelName || 'Model unavailable'} />
+                <MetaItem label="Status label" value={scoreMeta.label} />
+              </dl>
             </div>
 
             <div className="flex flex-wrap gap-3">
               <span
-                className={`inline-flex min-h-10 items-center rounded-lg border px-4 text-sm font-semibold ${getStatusClasses(
+                className={`inline-flex min-h-10 items-center rounded-xl border px-4 text-sm font-bold ${getStatusClasses(
                   match.status,
                 )}`}
               >
                 {match.status}
               </span>
-              <Link
-                to={`/resumes/${match.resumeId}`}
-                className="inline-flex min-h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-              >
-                Back to resume
+              <Link to={`/resumes/${match.resumeId}`} className="secondary-button min-h-10 px-4 py-2">
+                Back to Resume
               </Link>
-              <Link
-                to="/job-matches"
-                className="inline-flex min-h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-              >
+              <Link to="/job-matches" className="secondary-button min-h-10 px-4 py-2">
                 Back
               </Link>
               <button
                 type="button"
                 disabled={deleting}
                 onClick={handleDelete}
-                className="inline-flex min-h-10 items-center justify-center rounded-lg border border-red-200 bg-white px-4 text-sm font-semibold text-red-700 transition hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-100 disabled:text-red-300"
+                className="danger-button min-h-10 px-4 py-2"
               >
                 {deleting ? 'Deleting...' : 'Delete'}
               </button>
@@ -171,8 +161,8 @@ function JobMatchDetails() {
           </div>
         </section>
 
-        <section className="grid gap-5 lg:grid-cols-[280px_1fr]">
-          <article className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5">
+        <section className="grid gap-5 lg:grid-cols-[300px_1fr]">
+          <article className="glass-card p-6">
             <MatchScore score={score} scoreMeta={scoreMeta} />
             <p className="mt-5 text-center text-xs leading-5 text-slate-500">
               This match score is AI-generated guidance and does not guarantee
@@ -180,60 +170,75 @@ function JobMatchDetails() {
             </p>
           </article>
 
-          <article className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5">
-            <h2 className="text-lg font-semibold text-slate-950">Summary</h2>
-            <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-700">
+          <ReportSection title="Executive Summary" tone="cyan">
+            <p className="whitespace-pre-wrap text-sm leading-7 text-slate-300">
               {match.summary || 'No summary returned.'}
             </p>
-          </article>
+          </ReportSection>
         </section>
 
         <section className="grid gap-5 lg:grid-cols-2">
-          <ReportSection title="Matched Skills">
+          <ReportSection title="Matched Skills" tone="green">
             <TagList
               items={match.matchedSkills}
               emptyText="No matched skills returned."
+              tone="green"
             />
           </ReportSection>
 
-          <ReportSection title="Missing Skills">
+          <ReportSection title="Missing Skills" tone="amber">
             <TagList
               items={match.missingSkills}
               emptyText="No missing skills returned."
-              tone="amber"
+              tone="danger"
             />
           </ReportSection>
 
-          <MatchSectionCard title="Experience Match" section={match.experienceMatch} />
-          <MatchSectionCard title="Education Match" section={match.educationMatch} />
+          <MatchSectionCard title="Experience Alignment" section={match.experienceMatch} />
+          <MatchSectionCard title="Education Alignment" section={match.educationMatch} />
         </section>
 
         <section className="grid gap-5 lg:grid-cols-2">
-          <ReportSection title="Strengths">
-            <BulletList items={match.strengths} emptyText="No strengths returned." />
-          </ReportSection>
-
-          <ReportSection title="Gaps">
-            <BulletList items={match.gaps} emptyText="No gaps returned." />
-          </ReportSection>
-
-          <ReportSection title="Recommendations">
+          <ReportSection title="Why You Match" tone="green">
             <BulletList
+              items={match.strengths}
+              emptyText="No strengths returned."
+              tone="green"
+            />
+          </ReportSection>
+
+          <ReportSection title="Gaps To Address" tone="amber">
+            <BulletList items={match.gaps} emptyText="No gaps returned." tone="amber" />
+          </ReportSection>
+
+          <ReportSection title="Recommended Resume Changes" tone="indigo">
+            <NumberedList
               items={match.recommendations}
               emptyText="No recommendations returned."
             />
           </ReportSection>
 
-          <ReportSection title="Keyword Suggestions">
+          <ReportSection title="Suggested Keywords" tone="cyan">
             <TagList
               items={match.keywordSuggestions}
               emptyText="No keyword suggestions returned."
-              tone="emerald"
+              tone="cyan"
             />
           </ReportSection>
         </section>
       </div>
     </AuthenticatedLayout>
+  )
+}
+
+function MetaItem({ label, value }) {
+  return (
+    <div className="rounded-2xl border border-slate-700/60 bg-slate-950/50 p-4">
+      <dt className="text-xs font-black uppercase tracking-[0.14em] text-slate-500">
+        {label}
+      </dt>
+      <dd className="mt-2 break-words text-sm font-bold text-slate-200">{value}</dd>
+    </div>
   )
 }
 
@@ -246,24 +251,22 @@ function MatchScore({ score, scoreMeta }) {
   return (
     <div className="grid place-items-center text-center">
       <div
-        className="grid h-44 w-44 place-items-center rounded-full"
+        className="score-ring grid h-48 w-48 place-items-center rounded-full p-2 shadow-[0_0_44px_rgba(34,211,238,0.12)]"
         style={{
-          background: `conic-gradient(${scoreMeta.color} ${degrees}deg, #e2e8f0 0deg)`,
+          background: `conic-gradient(${scoreMeta.color} ${degrees}deg, rgba(148, 163, 184, 0.14) 0deg)`,
         }}
       >
-        <div className="grid h-32 w-32 place-items-center rounded-full bg-white">
+        <div className="grid h-full w-full place-items-center rounded-full border border-slate-700/60 bg-slate-950/95">
           <div>
-            <p className="text-4xl font-bold text-slate-950">
-              {displayedScore}
-            </p>
-            <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
+            <p className="text-5xl font-black text-white">{displayedScore}</p>
+            <p className="mt-1 text-xs font-black uppercase tracking-[0.14em] text-slate-500">
               Match score
             </p>
           </div>
         </div>
       </div>
       <span
-        className={`mt-5 rounded-lg px-3 py-2 text-sm font-semibold ${scoreMeta.bg} ${scoreMeta.text}`}
+        className={`mt-5 rounded-xl px-3 py-2 text-sm font-bold ${scoreMeta.bg} ${scoreMeta.text}`}
       >
         {scoreMeta.label}
       </span>
@@ -276,53 +279,50 @@ function MatchSectionCard({ title, section }) {
   const status = section?.status || 'NOT_FOUND'
 
   return (
-    <ReportSection title={title}>
+    <ReportSection title={title} tone="purple">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="rounded-lg bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700">
-          Score {score ?? '--'}
-        </span>
+        <span className="status-pill status-slate">Score {score ?? '--'}</span>
         <span
-          className={`rounded-lg px-3 py-2 text-sm font-semibold ${getSectionStatusClasses(
+          className={`rounded-full px-3 py-2 text-xs font-black uppercase tracking-[0.08em] ${getSectionStatusClasses(
             status,
           )}`}
         >
           {status}
         </span>
       </div>
-      <p className="mt-4 text-sm leading-7 text-slate-700">
+      <p className="mt-4 text-sm leading-7 text-slate-300">
         {section?.explanation || 'No explanation returned.'}
       </p>
     </ReportSection>
   )
 }
 
-function ReportSection({ title, children }) {
+function ReportSection({ children, title, tone = 'indigo' }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-blue-900/5">
-      <h2 className="text-lg font-semibold text-slate-950">{title}</h2>
+    <section className={`glass-card p-6 ${getSectionAccent(tone)}`}>
+      <h2 className="text-xl font-black text-white">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
   )
 }
 
-function TagList({ items = [], emptyText, tone = 'blue' }) {
+function TagList({ emptyText, items = [], tone = 'cyan' }) {
   if (!items.length) {
     return <EmptyText>{emptyText}</EmptyText>
   }
 
   const classes = {
-    amber: 'bg-amber-50 text-amber-700',
-    blue: 'bg-blue-50 text-blue-700',
-    emerald: 'bg-emerald-50 text-emerald-700',
+    amber: 'skill-pill warning-pill',
+    cyan: 'skill-pill cyan-pill',
+    danger: 'skill-pill danger-pill',
+    green: 'skill-pill success-pill',
+    indigo: 'skill-pill',
   }[tone]
 
   return (
     <div className="flex flex-wrap gap-2">
       {items.map((item, index) => (
-        <span
-          key={`${item}-${index}`}
-          className={`rounded-lg px-3 py-2 text-sm font-semibold ${classes}`}
-        >
+        <span key={`${item}-${index}`} className={classes}>
           {item}
         </span>
       ))}
@@ -330,7 +330,7 @@ function TagList({ items = [], emptyText, tone = 'blue' }) {
   )
 }
 
-function BulletList({ items = [], emptyText }) {
+function BulletList({ emptyText, items = [], tone = 'indigo' }) {
   if (!items.length) {
     return <EmptyText>{emptyText}</EmptyText>
   }
@@ -340,9 +340,9 @@ function BulletList({ items = [], emptyText }) {
       {items.map((item, index) => (
         <li
           key={`${item}-${index}`}
-          className="flex gap-3 text-sm leading-6 text-slate-700"
+          className="flex gap-3 text-sm leading-6 text-slate-300"
         >
-          <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-blue-600" />
+          <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${getBulletTone(tone)}`} />
           <span>{item}</span>
         </li>
       ))}
@@ -350,8 +350,54 @@ function BulletList({ items = [], emptyText }) {
   )
 }
 
+function NumberedList({ emptyText, items = [] }) {
+  if (!items.length) {
+    return <EmptyText>{emptyText}</EmptyText>
+  }
+
+  return (
+    <ol className="grid gap-3">
+      {items.map((item, index) => (
+        <li
+          key={`${item}-${index}`}
+          className="flex gap-3 rounded-2xl border border-indigo-300/20 bg-indigo-500/10 p-4 text-sm leading-6 text-slate-300"
+        >
+          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 text-xs font-black text-white">
+            {index + 1}
+          </span>
+          <span>{item}</span>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
 function EmptyText({ children }) {
   return <p className="text-sm leading-6 text-slate-500">{children}</p>
+}
+
+function getSectionAccent(tone) {
+  const tones = {
+    amber: 'border-amber-300/20',
+    cyan: 'border-cyan-300/20',
+    green: 'border-emerald-300/20',
+    indigo: 'border-indigo-300/20',
+    purple: 'border-purple-300/20',
+  }
+
+  return tones[tone] || tones.indigo
+}
+
+function getBulletTone(tone) {
+  const tones = {
+    amber: 'bg-amber-400',
+    cyan: 'bg-cyan-300',
+    green: 'bg-emerald-400',
+    indigo: 'bg-indigo-400',
+    purple: 'bg-purple-400',
+  }
+
+  return tones[tone] || tones.indigo
 }
 
 export default JobMatchDetails
