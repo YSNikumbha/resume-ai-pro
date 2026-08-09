@@ -75,7 +75,7 @@ class JobMatchServiceImplTest {
         savedJobMatch = new AtomicReference<>();
 
         AiProperties aiProperties = new AiProperties();
-        aiProperties.setModel("gemini-3.5-flash");
+        aiProperties.setModel("gemini-3.6-flash");
 
         jobMatchService = new JobMatchServiceImpl(
                 userRepository,
@@ -300,7 +300,7 @@ class JobMatchServiceImplTest {
                 .recommendations("[\"Add deployment impact\"]")
                 .keywordSuggestions("[\"REST APIs\"]")
                 .status(JobMatchStatus.COMPLETED)
-                .modelName("gemini-3.5-flash")
+                .modelName("gemini-3.6-flash")
                 .createdAt(createdAt)
                 .updatedAt(createdAt)
                 .build();

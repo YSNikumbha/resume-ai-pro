@@ -62,7 +62,7 @@ class ResumeAnalysisServiceImplTest {
         savedAnalysis = new AtomicReference<>();
 
         AiProperties aiProperties = new AiProperties();
-        aiProperties.setModel("gemini-2.5-flash");
+        aiProperties.setModel("gemini-3.6-flash");
         ResumeAnalysisJsonMapper jsonMapper = new ResumeAnalysisJsonMapper(new ObjectMapper());
 
         resumeAnalysisService = new ResumeAnalysisServiceImpl(

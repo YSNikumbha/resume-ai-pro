@@ -82,7 +82,7 @@ function ResumeHistory() {
               index state.
             </p>
           </div>
-          <Link to="/resumes/upload" className="primary-button min-h-11 px-5">
+          <Link to="/resumes/upload" className="primary-button min-h-11 w-full px-5 sm:w-auto">
             Upload Resume
           </Link>
         </div>
@@ -169,7 +169,7 @@ function ResumeCard({ deleting, onDelete, resume }) {
           </span>
         </div>
 
-        <div className="flex shrink-0 flex-wrap gap-2 lg:justify-end">
+        <div className="mobile-action-grid shrink-0 lg:justify-end">
           <Link to={`/resumes/${resume.id}`} className="primary-button min-h-10 px-4 py-2">
             View
           </Link>

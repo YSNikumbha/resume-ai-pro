@@ -1,0 +1,9 @@
+target
+uploads
+.git
+.idea
+.vscode
+*.log
+application-local.properties
+.env
+.env.*

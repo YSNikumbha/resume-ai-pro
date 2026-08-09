@@ -84,6 +84,18 @@ a {
   text-decoration: none;
 }
 
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+
+pre,
+code {
+  overflow-wrap: anywhere;
+}
+
 ::selection {
   color: #f8fafc;
   background: rgba(99, 102, 241, 0.55);
@@ -110,16 +122,29 @@ a {
 
 #root {
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .ai-page {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   color: var(--ai-text);
   background:
     radial-gradient(circle at 14% 12%, rgba(99, 102, 241, 0.12), transparent 28rem),
     radial-gradient(circle at 84% 72%, rgba(34, 211, 238, 0.09), transparent 26rem),
     linear-gradient(180deg, rgba(13, 19, 34, 0.86), rgba(7, 11, 20, 1));
+}
+
+.app-shell {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.app-main-shell {
+  height: 100%;
+  min-width: 0;
 }
 
 .ai-page::before,
@@ -153,6 +178,15 @@ a {
 .ai-main {
   position: relative;
   z-index: 1;
+}
+
+.break-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.safe-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
 
 .glass-card {
@@ -228,6 +262,8 @@ a {
 .danger-button,
 .ghost-button {
   display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
   min-height: 2.75rem;
   align-items: center;
   justify-content: center;
@@ -236,7 +272,10 @@ a {
   padding: 0.72rem 1rem;
   font-size: 0.875rem;
   font-weight: 800;
-  line-height: 1;
+  line-height: 1.15;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
   transition:
     transform 180ms ease,
     box-shadow 180ms ease,
@@ -396,6 +435,17 @@ a {
   padding-inline: 1.25rem;
 }
 
+.mobile-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.mobile-action-grid > * {
+  width: 100%;
+  min-width: 0;
+}
+
 .professional-section {
   padding-block: 4.5rem;
 }
@@ -406,6 +456,7 @@ a {
 
 .status-pill {
   display: inline-flex;
+  max-width: 100%;
   align-items: center;
   gap: 0.4rem;
   border-radius: 999px;
@@ -414,6 +465,7 @@ a {
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .status-cyan {
@@ -618,10 +670,52 @@ a {
   .page-shell {
     padding-inline: 2rem;
   }
+
+  .mobile-action-grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .mobile-action-grid > * {
+    width: auto;
+  }
+
+  .safe-bottom {
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+  }
 }
 
 @media (min-width: 1024px) {
   .page-shell {
     padding-inline: 2.5rem;
+  }
+}
+
+@media (max-width: 639px) {
+  body::before {
+    background-size: 36px 36px;
+  }
+
+  .ai-page::before,
+  .ai-page::after {
+    opacity: 0.18;
+    filter: blur(36px);
+  }
+
+  .glass-card,
+  .stat-shell {
+    border-radius: 0.875rem;
+  }
+
+  .professional-section {
+    padding-block: 3rem;
+  }
+
+  .primary-button,
+  .secondary-button,
+  .danger-button,
+  .ghost-button {
+    min-height: 2.5rem;
+    padding: 0.68rem 0.85rem;
   }
 }

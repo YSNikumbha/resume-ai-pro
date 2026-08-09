@@ -76,8 +76,7 @@ class ResumeChatServiceImplTest {
     @BeforeEach
     void setUp() {
         AiProperties aiProperties = new AiProperties();
-        aiProperties.setModel("gemini-3.5-flash");
-        aiProperties.setTemperature(0.2);
+        aiProperties.setModel("gemini-3.6-flash");
         RagProperties ragProperties = new RagProperties();
         ragProperties.setSourceExcerptLength(120);
 

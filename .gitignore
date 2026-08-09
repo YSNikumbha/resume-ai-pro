@@ -11,6 +11,10 @@ backend/uploads/
 .env
 .env.*
 !.env.example
+*.env.local
+frontend/.env
+frontend/.env.local
+!frontend/.env.example
 backend/src/main/resources/application-local.properties
 logs/
 *.log

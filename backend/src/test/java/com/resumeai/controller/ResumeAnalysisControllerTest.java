@@ -103,7 +103,7 @@ class ResumeAnalysisControllerTest {
                 .suggestions(List.of("Add measurable impact"))
                 .analyzedAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .modelName("gemini-2.5-flash")
+                .modelName("gemini-3.6-flash")
                 .status(AnalysisStatus.COMPLETED)
                 .build();
     }

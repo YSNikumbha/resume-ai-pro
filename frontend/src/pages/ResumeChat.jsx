@@ -181,8 +181,8 @@ function ResumeChat() {
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <Link to={`/resumes/${resumeId}`} className="secondary-button min-h-10 px-4 py-2">
+            <div className="flex w-full flex-wrap gap-3 lg:w-auto">
+              <Link to={`/resumes/${resumeId}`} className="secondary-button min-h-10 w-full px-4 py-2 sm:w-auto">
                 Back to Resume
               </Link>
             </div>
@@ -206,9 +206,9 @@ function ResumeChat() {
             </div>
           </div>
 
-          <div className="min-h-[24rem] space-y-5 px-5 py-6 sm:px-6">
+          <div className="min-h-[24rem] space-y-5 px-4 py-5 sm:px-6 sm:py-6">
               {!displayedResponse && !asking ? (
-                <div className="grid min-h-[18rem] place-items-center rounded-2xl border border-dashed border-slate-700 bg-slate-900/50 p-8 text-center">
+                <div className="grid min-h-[18rem] place-items-center rounded-2xl border border-dashed border-slate-700 bg-slate-900/50 p-5 text-center sm:p-8">
                   <div>
                     <p className="mx-auto grid h-12 w-12 place-items-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-sm font-black text-cyan-100">
                       AI
@@ -227,7 +227,7 @@ function ResumeChat() {
                           type="button"
                           disabled={!canChat || asking}
                           onClick={() => handlePromptSelect(example)}
-                          className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-left text-xs font-bold text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-300/20 focus:outline-none focus:ring-4 focus:ring-cyan-300/20 disabled:border-slate-700/60 disabled:bg-slate-800/40 disabled:text-slate-500"
+                          className="max-w-full rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-left text-xs font-bold text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-300/20 focus:outline-none focus:ring-4 focus:ring-cyan-300/20 disabled:border-slate-700/60 disabled:bg-slate-800/40 disabled:text-slate-500"
                         >
                           {example}
                         </button>
@@ -246,7 +246,7 @@ function ResumeChat() {
 
               {asking ? (
                 <div className="page-enter flex justify-start">
-                  <div className="max-w-[86%] rounded-3xl rounded-bl-md border border-slate-700/70 bg-slate-900/80 px-5 py-4 text-sm text-slate-200">
+                  <div className="max-w-full rounded-3xl rounded-bl-md border border-slate-700/70 bg-slate-900/80 px-5 py-4 text-sm text-slate-200 sm:max-w-[86%]">
                     <p className="font-bold text-cyan-100">
                       Searching relevant resume sections...
                       <span className="loading-dots ml-1" aria-hidden="true">
@@ -260,7 +260,7 @@ function ResumeChat() {
               ) : null}
           </div>
 
-          <div className="sticky bottom-0 border-t border-slate-800 bg-slate-950/90 p-4 backdrop-blur-2xl sm:p-5">
+          <div className="safe-bottom sticky bottom-0 border-t border-slate-800 bg-slate-950/90 p-4 backdrop-blur-2xl sm:p-5">
             <div className="mb-2 flex items-center justify-between gap-3">
                 <label htmlFor="resume-question" className="ai-label mb-0">
                   Question
@@ -357,7 +357,7 @@ function ChatResponseCard({ onSelectPrompt, response }) {
   return (
     <div className="space-y-5">
       <div className="page-enter flex justify-end">
-        <div className="max-w-[86%] rounded-3xl rounded-br-md bg-gradient-to-br from-indigo-500 to-cyan-400 px-5 py-4 text-sm font-semibold leading-7 text-white shadow-lg shadow-indigo-950/30">
+        <div className="max-w-full rounded-3xl rounded-br-md bg-gradient-to-br from-indigo-500 to-cyan-400 px-5 py-4 text-sm font-semibold leading-7 text-white shadow-lg shadow-indigo-950/30 sm:max-w-[86%]">
           {response.question}
         </div>
       </div>
@@ -422,7 +422,7 @@ function InsufficientContextPanel({ onSelectPrompt }) {
             key={prompt}
             type="button"
             onClick={() => onSelectPrompt(prompt)}
-            className="rounded-full border border-amber-300/25 bg-slate-950/35 px-3 py-2 text-left text-xs font-bold text-amber-100 transition hover:border-amber-300/50 hover:bg-amber-300/10 focus:outline-none focus:ring-4 focus:ring-amber-300/20"
+            className="max-w-full rounded-full border border-amber-300/25 bg-slate-950/35 px-3 py-2 text-left text-xs font-bold text-amber-100 transition hover:border-amber-300/50 hover:bg-amber-300/10 focus:outline-none focus:ring-4 focus:ring-amber-300/20"
           >
             {prompt}
           </button>
@@ -465,7 +465,7 @@ function SourceCards({ insufficientContext = false, sources }) {
         return (
           <article
             key={key}
-            className="rounded-2xl border border-cyan-300/20 bg-slate-950/50 p-4"
+            className="min-w-0 rounded-2xl border border-cyan-300/20 bg-slate-950/50 p-4"
           >
             <div className="flex flex-wrap items-center gap-2">
               <span className="status-pill status-cyan">Source {index + 1}</span>
@@ -476,7 +476,7 @@ function SourceCards({ insufficientContext = false, sources }) {
                 Similarity: {formatSimilarity(source.similarityScore)}
               </span>
             </div>
-            <p className="mt-3 text-sm leading-6 text-slate-300">
+            <p className="mt-3 break-words text-sm leading-6 text-slate-300">
               {displayedExcerpt}
             </p>
             {shouldCollapse ? (

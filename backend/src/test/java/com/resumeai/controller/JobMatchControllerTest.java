@@ -143,7 +143,7 @@ class JobMatchControllerTest {
                 .recommendations(List.of("Add deployment impact"))
                 .keywordSuggestions(List.of("REST APIs"))
                 .status(JobMatchStatus.COMPLETED)
-                .modelName("gemini-3.5-flash")
+                .modelName("gemini-3.6-flash")
                 .createdAt(now)
                 .updatedAt(now)
                 .build();

@@ -6,6 +6,7 @@ import com.resumeai.security.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -34,10 +35,12 @@ public class SecurityConfig {
     public static final String REGISTER_ENDPOINT = "/api/auth/register";
     public static final String LOGIN_ENDPOINT = "/api/auth/login";
     public static final String HEALTH_ENDPOINT = "/api/auth/health";
+    public static final String ACTUATOR_HEALTH_ENDPOINT = "/actuator/health";
     public static final String[] PUBLIC_ENDPOINTS = {
             REGISTER_ENDPOINT,
             LOGIN_ENDPOINT,
-            HEALTH_ENDPOINT
+            HEALTH_ENDPOINT,
+            ACTUATOR_HEALTH_ENDPOINT
     };
 
     private static final String UNAUTHORIZED_MESSAGE = "Authentication is required.";
@@ -47,6 +50,9 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
+
+    @Value("${app.frontend.url:http://localhost:5173}")
+    private String frontendUrl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -85,10 +91,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of(
-                "http://localhost:*",
-                "http://127.0.0.1:*"
-        ));
+        configuration.setAllowedOrigins(List.of(normalizeOrigin(frontendUrl)));
         configuration.setAllowedMethods(List.of(
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),
@@ -99,9 +102,7 @@ public class SecurityConfig {
         ));
         configuration.setAllowedHeaders(List.of(
                 HttpHeaders.AUTHORIZATION,
-                HttpHeaders.CONTENT_TYPE,
-                HttpHeaders.ACCEPT,
-                HttpHeaders.ORIGIN
+                HttpHeaders.CONTENT_TYPE
         ));
         configuration.setExposedHeaders(List.of(HttpHeaders.AUTHORIZATION));
         configuration.setMaxAge(3600L);
@@ -109,6 +110,14 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    private String normalizeOrigin(String origin) {
+        String normalizedOrigin = origin == null ? "" : origin.trim();
+        while (normalizedOrigin.endsWith("/")) {
+            normalizedOrigin = normalizedOrigin.substring(0, normalizedOrigin.length() - 1);
+        }
+        return normalizedOrigin.isBlank() ? "http://localhost:5173" : normalizedOrigin;
     }
 
     private void writeErrorResponse(HttpServletResponse response, int status, String message) throws java.io.IOException {

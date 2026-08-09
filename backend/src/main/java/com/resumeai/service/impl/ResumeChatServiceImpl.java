@@ -108,7 +108,6 @@ public class ResumeChatServiceImpl implements ResumeChatService {
                     .prompt(prompt)
                     .options(GoogleGenAiChatOptions.builder()
                             .model(aiProperties.getModel())
-                            .temperature(aiProperties.getTemperature())
                             .responseMimeType("text/plain")
                             .googleSearchRetrieval(false)
                             .internalToolExecutionEnabled(false)

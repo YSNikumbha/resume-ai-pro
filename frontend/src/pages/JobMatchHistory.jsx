@@ -82,7 +82,7 @@ function JobMatchHistory() {
               recommendations.
             </p>
           </div>
-          <Link to="/job-matches/new" className="primary-button min-h-10 w-fit px-4 py-2">
+          <Link to="/job-matches/new" className="primary-button min-h-10 w-full px-4 py-2 sm:w-fit">
             New Job Match
           </Link>
         </div>
@@ -103,7 +103,7 @@ function JobMatchHistory() {
               Compare a resume with a job description to create your first AI
               match report.
             </p>
-            <Link to="/job-matches/new" className="primary-button mt-5 min-h-10 px-4 py-2">
+            <Link to="/job-matches/new" className="primary-button mt-5 min-h-10 w-full px-4 py-2 sm:w-fit">
               Create Match
             </Link>
           </div>
@@ -175,7 +175,7 @@ function MatchHistoryItem({ deleting, match, onDelete }) {
           </span>
         </div>
 
-        <div className="flex flex-wrap gap-3 lg:justify-end">
+        <div className="mobile-action-grid lg:justify-end">
           <Link to={`/job-matches/${match.id}`} className="primary-button min-h-10 px-4 py-2">
             View
           </Link>

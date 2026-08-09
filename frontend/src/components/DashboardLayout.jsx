@@ -94,7 +94,7 @@ function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="ai-page h-screen overflow-hidden">
+    <div className="ai-page app-shell">
       <Sidebar
         accountEmail={accountEmail}
         accountName={accountName}
@@ -115,7 +115,7 @@ function DashboardLayout({ children }) {
           <Sidebar
             accountEmail={accountEmail}
             accountName={accountName}
-            className="relative z-10 flex h-full w-[min(18rem,86vw)]"
+            className="relative z-10 flex h-full w-[min(18rem,86vw)] max-w-full"
             initials={initials}
             onLogout={handleLogout}
             pathname={location.pathname}
@@ -123,9 +123,9 @@ function DashboardLayout({ children }) {
         </div>
       ) : null}
 
-      <div className="ai-main flex h-screen min-w-0 flex-col lg:pl-[250px]">
+      <div className="ai-main app-main-shell flex flex-col lg:pl-[250px]">
         <header className="sticky top-0 z-30 border-b border-slate-800/80 bg-[#070b14]/82 backdrop-blur-xl">
-          <div className="flex min-h-16 items-center justify-between gap-4 px-5 sm:px-8 lg:px-10">
+          <div className="flex min-h-16 items-center justify-between gap-3 px-4 sm:gap-4 sm:px-8 lg:px-10">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
@@ -155,14 +155,14 @@ function DashboardLayout({ children }) {
                   {accountEmail}
                 </p>
               </div>
-              <span className="grid h-10 w-10 place-items-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-xs font-black text-cyan-100">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-xs font-black text-cyan-100 sm:h-10 sm:w-10">
                 {initials}
               </span>
             </div>
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-5 py-6 sm:px-8 lg:px-10">
+        <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-5 sm:px-8 sm:py-6 lg:px-10">
           <div className="mx-auto w-full max-w-7xl">{children}</div>
         </main>
       </div>

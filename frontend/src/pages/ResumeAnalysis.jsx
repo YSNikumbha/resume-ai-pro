@@ -85,13 +85,13 @@ function ResumeAnalysis() {
               </dl>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex w-full flex-wrap gap-3 lg:w-auto">
               <span
-                className={`inline-flex min-h-10 items-center rounded-xl border px-4 text-sm font-bold ${statusClasses}`}
+                className={`inline-flex min-h-10 w-full items-center justify-center rounded-xl border px-4 text-sm font-bold sm:w-auto ${statusClasses}`}
               >
                 {analysis.status}
               </span>
-              <Link to={`/resumes/${analysis.resumeId}`} className="secondary-button min-h-10 px-4 py-2">
+              <Link to={`/resumes/${analysis.resumeId}`} className="secondary-button min-h-10 w-full px-4 py-2 sm:w-auto">
                 Back to Resume
               </Link>
             </div>
@@ -212,7 +212,7 @@ function AtsScore({ score, scoreMeta }) {
 
 function ReportSection({ children, title, tone = 'indigo' }) {
   return (
-    <section className={`glass-card p-6 ${getSectionAccent(tone)}`}>
+    <section className={`glass-card p-5 sm:p-6 ${getSectionAccent(tone)}`}>
       <h2 className="text-xl font-black text-white">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
@@ -245,7 +245,7 @@ function BulletList({ emptyText, items = [], tone = 'indigo' }) {
       {items.map((item) => (
         <li key={item} className="flex gap-3 text-sm leading-6 text-slate-300">
           <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${getBulletTone(tone)}`} />
-          <span>{item}</span>
+          <span className="break-words">{item}</span>
         </li>
       ))}
     </ul>
@@ -267,7 +267,7 @@ function NumberedList({ emptyText, items = [] }) {
           <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-950 text-xs font-black text-cyan-100">
             {index + 1}
           </span>
-          <span>{item}</span>
+          <span className="break-words">{item}</span>
         </li>
       ))}
     </ol>
@@ -316,10 +316,10 @@ function ExperienceList({ items = [] }) {
         >
           <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h3 className="font-black text-white">
+              <h3 className="break-words font-black text-white">
                 {item.role || 'Role unavailable'}
               </h3>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 break-words text-sm text-slate-400">
                 {item.organization || 'Organization unavailable'}
               </p>
             </div>
@@ -350,10 +350,10 @@ function ProjectList({ items = [] }) {
           key={`${item.name || 'project'}-${index}`}
           className="rounded-2xl border border-slate-700/60 bg-slate-950/50 p-4"
         >
-          <h3 className="font-black text-white">
+          <h3 className="break-words font-black text-white">
             {item.name || 'Project unavailable'}
           </h3>
-          <p className="mt-2 text-sm leading-6 text-slate-300">
+          <p className="mt-2 break-words text-sm leading-6 text-slate-300">
             {item.description || 'No description returned.'}
           </p>
           <div className="mt-4">

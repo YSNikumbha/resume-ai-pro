@@ -64,7 +64,6 @@ public class ResumeAiServiceImpl implements ResumeAiService {
                     .prompt(prompt)
                     .options(ChatOptions.builder()
                             .model(aiProperties.getModel())
-                            .temperature(aiProperties.getTemperature())
                             .build())
                     .call()
                     .entity(ResumeAnalysisAiResult.class);

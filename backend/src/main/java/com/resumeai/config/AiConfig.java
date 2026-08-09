@@ -33,7 +33,6 @@ public class AiConfig {
         return builder
                 .defaultOptions(ChatOptions.builder()
                         .model(aiProperties.getModel())
-                        .temperature(aiProperties.getTemperature())
                         .build())
                 .build();
     }

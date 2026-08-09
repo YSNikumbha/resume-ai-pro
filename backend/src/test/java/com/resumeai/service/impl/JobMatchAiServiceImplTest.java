@@ -43,8 +43,7 @@ class JobMatchAiServiceImplTest {
     @BeforeEach
     void setUp() {
         AiProperties aiProperties = new AiProperties();
-        aiProperties.setModel("gemini-3.5-flash");
-        aiProperties.setTemperature(0.2);
+        aiProperties.setModel("gemini-3.6-flash");
         aiProperties.setMaxResumeCharacters(30000);
         aiProperties.setMaxJobDescriptionCharacters(20000);
         aiProperties.setMaxJobMatchInputCharacters(45000);

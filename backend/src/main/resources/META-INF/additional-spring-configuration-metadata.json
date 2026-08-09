@@ -21,14 +21,19 @@
       "description": "Maximum accepted resume PDF size in bytes."
     },
     {
+      "name": "app.frontend.url",
+      "type": "java.lang.String",
+      "description": "Frontend origin allowed by the API CORS configuration."
+    },
+    {
+      "name": "app.logging.include-exception-stacktrace",
+      "type": "java.lang.Boolean",
+      "description": "Whether backend exception handlers log stack traces for unexpected server errors."
+    },
+    {
       "name": "app.ai.model",
       "type": "java.lang.String",
       "description": "Gemini model name used for resume analysis."
-    },
-    {
-      "name": "app.ai.temperature",
-      "type": "java.lang.Double",
-      "description": "Sampling temperature used for AI resume analysis."
     },
     {
       "name": "app.ai.max-resume-characters",

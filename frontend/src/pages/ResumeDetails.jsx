@@ -366,9 +366,9 @@ function ResumeDetails() {
 
 function StatusRow({ label, value }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-3">
+    <div className="flex flex-col gap-1 rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <span className="text-sm font-semibold text-slate-400">{label}</span>
-      <span className="text-sm font-black text-white">{value}</span>
+      <span className="break-words text-sm font-black text-white">{value}</span>
     </div>
   )
 }
@@ -549,7 +549,7 @@ function AnalysisHistoryItem({ analysis }) {
             </span>
           </div>
         </div>
-        <Link to={`/analyses/${analysis.id}`} className="secondary-button min-h-10 w-fit px-4 py-2">
+        <Link to={`/analyses/${analysis.id}`} className="secondary-button min-h-10 w-full px-4 py-2 sm:w-fit">
           View
         </Link>
       </div>
@@ -584,7 +584,7 @@ function JobMatchHistoryItem({ match }) {
             </span>
           </div>
         </div>
-        <Link to={`/job-matches/${match.id}`} className="secondary-button min-h-10 w-fit px-4 py-2">
+        <Link to={`/job-matches/${match.id}`} className="secondary-button min-h-10 w-full px-4 py-2 sm:w-fit">
           View
         </Link>
       </div>

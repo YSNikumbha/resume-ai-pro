@@ -126,25 +126,25 @@ function JobMatchDetails() {
               </dl>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex w-full flex-wrap gap-3 lg:w-auto">
               <span
-                className={`inline-flex min-h-10 items-center rounded-xl border px-4 text-sm font-bold ${getStatusClasses(
+                className={`inline-flex min-h-10 w-full items-center justify-center rounded-xl border px-4 text-sm font-bold sm:w-auto ${getStatusClasses(
                   match.status,
                 )}`}
               >
                 {match.status}
               </span>
-              <Link to={`/resumes/${match.resumeId}`} className="secondary-button min-h-10 px-4 py-2">
+              <Link to={`/resumes/${match.resumeId}`} className="secondary-button min-h-10 w-full px-4 py-2 sm:w-auto">
                 Back to Resume
               </Link>
-              <Link to="/job-matches" className="secondary-button min-h-10 px-4 py-2">
+              <Link to="/job-matches" className="secondary-button min-h-10 w-full px-4 py-2 sm:w-auto">
                 Back
               </Link>
               <button
                 type="button"
                 disabled={deleting}
                 onClick={handleDelete}
-                className="danger-button min-h-10 px-4 py-2"
+                className="danger-button min-h-10 w-full px-4 py-2 sm:w-auto"
               >
                 {deleting ? 'Deleting...' : 'Delete'}
               </button>
@@ -299,7 +299,7 @@ function MatchSectionCard({ title, section }) {
 
 function ReportSection({ children, title, tone = 'indigo' }) {
   return (
-    <section className={`glass-card p-6 ${getSectionAccent(tone)}`}>
+    <section className={`glass-card p-5 sm:p-6 ${getSectionAccent(tone)}`}>
       <h2 className="text-xl font-black text-white">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
@@ -343,7 +343,7 @@ function BulletList({ emptyText, items = [], tone = 'indigo' }) {
           className="flex gap-3 text-sm leading-6 text-slate-300"
         >
           <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${getBulletTone(tone)}`} />
-          <span>{item}</span>
+          <span className="break-words">{item}</span>
         </li>
       ))}
     </ul>
@@ -365,7 +365,7 @@ function NumberedList({ emptyText, items = [] }) {
           <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 text-xs font-black text-white">
             {index + 1}
           </span>
-          <span>{item}</span>
+          <span className="break-words">{item}</span>
         </li>
       ))}
     </ol>

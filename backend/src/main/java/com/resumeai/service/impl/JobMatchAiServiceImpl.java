@@ -74,7 +74,6 @@ public class JobMatchAiServiceImpl implements JobMatchAiService {
                     .prompt(prompt)
                     .options(ChatOptions.builder()
                             .model(aiProperties.getModel())
-                            .temperature(aiProperties.getTemperature())
                             .build())
                     .call()
                     .entity(JobMatchAiResult.class);

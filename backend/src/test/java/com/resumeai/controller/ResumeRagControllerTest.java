@@ -156,7 +156,7 @@ class ResumeRagControllerTest {
                 .question("What skills are mentioned?")
                 .answer("Java is mentioned [Source 1].")
                 .sources(List.of())
-                .modelName("gemini-3.5-flash")
+                .modelName("gemini-3.6-flash")
                 .createdAt(LocalDateTime.now())
                 .insufficientContext(false)
                 .build();

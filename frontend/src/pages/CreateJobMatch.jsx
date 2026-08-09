@@ -146,7 +146,7 @@ function CreateJobMatch() {
               experience, education, and keywords with your selected resume.
             </p>
           </div>
-          <Link to="/job-matches" className="secondary-button min-h-10 w-fit px-4 py-2">
+          <Link to="/job-matches" className="secondary-button min-h-10 w-full px-4 py-2 sm:w-fit">
             Match History
           </Link>
         </div>
@@ -197,7 +197,7 @@ function CreateJobMatch() {
                 ) : null}
                 {selectedResume ? (
                   <div className="mt-4 rounded-2xl border border-slate-700/60 bg-slate-950/50 p-4">
-                    <p className="text-sm font-black text-white">
+                    <p className="break-words text-sm font-black text-white">
                       {selectedResume.originalFileName}
                     </p>
                     <p className="mt-1 text-sm text-slate-500">
@@ -252,8 +252,8 @@ function CreateJobMatch() {
                   updateField('description', event.target.value)
                 }
                 placeholder="Paste the full role description, responsibilities, required skills, preferred skills, qualifications, and company context."
-                rows={17}
-                className={`ai-textarea min-h-[28rem] text-sm leading-7 ${
+                rows={12}
+                className={`ai-textarea min-h-[18rem] text-sm leading-7 lg:min-h-[28rem] ${
                   fieldErrors.description ? '!border-red-400/70' : ''
                 }`}
               />

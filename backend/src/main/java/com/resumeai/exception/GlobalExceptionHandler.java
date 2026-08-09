@@ -3,6 +3,7 @@ package com.resumeai.exception;
 import com.resumeai.dto.response.ApiResponse;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -22,6 +23,10 @@ public class GlobalExceptionHandler {
     private static final String VALIDATION_ERROR_FALLBACK = "Validation failed.";
     private static final String UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred.";
     private static final String ACCESS_DENIED_MESSAGE = "Access denied.";
+    private static final String AUTHENTICATION_FAILED_MESSAGE = "Invalid email or password.";
+
+    @Value("${app.logging.include-exception-stacktrace:true}")
+    private boolean includeExceptionStacktrace;
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ApiResponse> handleEmailAlreadyExists(EmailAlreadyExistsException exception) {
@@ -134,14 +139,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FileStorageException.class)
     public ResponseEntity<ApiResponse> handleFileStorage(FileStorageException exception) {
-        log.error("File storage operation failed.", exception);
+        logException("File storage operation failed.", exception);
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiResponse> handleAuthenticationException(AuthenticationException exception) {
-        log.warn("Authentication failure: {}", exception.getMessage());
-        return buildErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage());
+        log.warn("Authentication failure: {}", exception.getClass().getSimpleName());
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, AUTHENTICATION_FAILED_MESSAGE);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -162,8 +167,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGenericException(Exception exception) {
-        log.error("Unexpected error occurred while processing request.", exception);
+        logException("Unexpected error occurred while processing request.", exception);
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, UNEXPECTED_ERROR_MESSAGE);
+    }
+
+    private void logException(String message, Exception exception) {
+        if (includeExceptionStacktrace) {
+            log.error(message, exception);
+            return;
+        }
+
+        log.error("{} errorType={}.", message, exception.getClass().getSimpleName());
     }
 
     private String extractValidationMessage(MethodArgumentNotValidException exception) {

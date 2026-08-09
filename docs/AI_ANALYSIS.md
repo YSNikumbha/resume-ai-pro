@@ -28,11 +28,10 @@ Spring AI 1.1 uses these official Google GenAI properties:
 
 ```properties
 spring.ai.google.genai.api-key=${GEMINI_API_KEY:}
-spring.ai.google.genai.chat.options.model=${GEMINI_MODEL:gemini-3.5-flash}
-spring.ai.google.genai.chat.options.temperature=${AI_TEMPERATURE:0.2}
+spring.ai.google.genai.chat.options.model=${GEMINI_MODEL:gemini-3.6-flash}
 ```
 
-`app.ai.model`, `app.ai.temperature`, and `app.ai.max-resume-characters` are application-level aliases used by the service layer.
+`app.ai.model` and `app.ai.max-resume-characters` are application-level settings used by the service layer.
 
 ## Prompt Flow
 

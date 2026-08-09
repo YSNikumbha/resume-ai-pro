@@ -129,7 +129,7 @@ function Dashboard() {
             Track your resume performance and AI insights.
           </p>
         </div>
-        <Link to="/resumes/upload" className="primary-button min-h-11 px-5">
+        <Link to="/resumes/upload" className="primary-button min-h-11 w-full px-5 sm:w-auto">
           + Upload Resume
         </Link>
       </section>
@@ -152,7 +152,7 @@ function Dashboard() {
           <SectionTitle
             title="Recent Resumes"
             description="Recently uploaded resumes ready for analysis, matching, or chat indexing."
-            action={<Link to="/resumes" className="secondary-button min-h-10 px-4 py-2">View All</Link>}
+            action={<Link to="/resumes" className="secondary-button min-h-10 w-full px-4 py-2 sm:w-auto">View All</Link>}
           />
           {loadingStats ? (
             <PanelLoading label="Loading resumes" />
@@ -160,7 +160,7 @@ function Dashboard() {
             <EmptyState
               title="Your career workspace is empty."
               description="Upload your first resume to start generating AI insights."
-              action={<Link to="/resumes/upload" className="primary-button mt-5 min-h-10 px-4 py-2">Upload Your First Resume</Link>}
+              action={<Link to="/resumes/upload" className="primary-button mt-5 min-h-10 w-full px-4 py-2 sm:w-auto">Upload Your First Resume</Link>}
             />
           ) : (
             <div className="mt-4 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50">
@@ -205,7 +205,7 @@ function Dashboard() {
           <SectionTitle
             title="Recent AI Analysis"
             description="Latest generated resume reports and ATS score status."
-            action={<Link to="/resumes" className="secondary-button min-h-10 px-4 py-2">Resume History</Link>}
+            action={<Link to="/resumes" className="secondary-button min-h-10 w-full px-4 py-2 sm:w-auto">Resume History</Link>}
           />
           {loadingStats ? (
             <PanelLoading label="Loading analyses" />
@@ -227,7 +227,7 @@ function Dashboard() {
           <SectionTitle
             title="Recent Job Matches"
             description="Saved resume-to-job comparisons and match quality."
-            action={<Link to="/job-matches" className="secondary-button min-h-10 px-4 py-2">Match History</Link>}
+            action={<Link to="/job-matches" className="secondary-button min-h-10 w-full px-4 py-2 sm:w-auto">Match History</Link>}
           />
           {loadingStats ? (
             <PanelLoading label="Loading matches" />
@@ -359,7 +359,7 @@ function RecentResumeItem({ resume }) {
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="mobile-action-grid lg:justify-end">
           <Link to={`/resumes/${resume.id}`} className="secondary-button min-h-10 px-4 py-2">
             Open
           </Link>
@@ -401,7 +401,7 @@ function RecentAnalysisItem({ analysis }) {
             </span>
           </div>
         </div>
-        <Link to={`/analyses/${analysis.id}`} className="secondary-button min-h-10 w-fit px-4 py-2">
+        <Link to={`/analyses/${analysis.id}`} className="secondary-button min-h-10 w-full px-4 py-2 sm:w-fit">
           View
         </Link>
       </div>
@@ -420,7 +420,7 @@ function RecentJobMatchItem({ match }) {
           <h3 className="break-words text-sm font-black text-white">
             {match.jobTitle}
           </h3>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 break-words text-xs text-slate-500">
             {match.companyName || 'Company unavailable'} · {match.resumeFileName}
           </p>
           <p className="mt-1 text-xs text-slate-500">
@@ -441,7 +441,7 @@ function RecentJobMatchItem({ match }) {
             </span>
           </div>
         </div>
-        <Link to={`/job-matches/${match.id}`} className="secondary-button min-h-10 w-fit px-4 py-2">
+        <Link to={`/job-matches/${match.id}`} className="secondary-button min-h-10 w-full px-4 py-2 sm:w-fit">
           View
         </Link>
       </div>

@@ -43,8 +43,7 @@ class ResumeAiServiceImplTest {
     @BeforeEach
     void setUp() {
         AiProperties aiProperties = new AiProperties();
-        aiProperties.setModel("gemini-2.5-flash");
-        aiProperties.setTemperature(0.2);
+        aiProperties.setModel("gemini-3.6-flash");
         aiProperties.setMaxResumeCharacters(30000);
 
         resumeAiService = new ResumeAiServiceImpl(
