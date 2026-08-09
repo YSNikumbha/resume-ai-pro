@@ -10,7 +10,7 @@ Live Demo: Not deployed yet
 
 API: Not deployed yet
 
-See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for production deployment requirements, environment variables, database checks, storage limitations, health checks, and the smoke-test checklist.
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the full production deployment guide, [docs/BACKEND_DEPLOYMENT_CHECKLIST.md](docs/BACKEND_DEPLOYMENT_CHECKLIST.md) for backend readiness, and [docs/LIVE_SMOKE_TEST.md](docs/LIVE_SMOKE_TEST.md) for final live verification.
 
 ## Technology Stack
 
@@ -142,11 +142,13 @@ Warning: `docker compose down -v` deletes database data and uploaded resume file
 Backend production runs with the `prod` Spring profile and reads secrets from environment variables. Do not commit real values.
 
 ```text
-DB_URL=jdbc:postgresql://<host>:<port>/<database>
+SPRING_PROFILES_ACTIVE=prod
+DB_URL=jdbc:postgresql://<host>:<port>/<database>?sslmode=require
 DB_USERNAME=<database_user>
 DB_PASSWORD=<database_password>
 JWT_SECRET=<strong_jwt_signing_secret>
 GEMINI_API_KEY=<google_gemini_api_key>
+GEMINI_MODEL=gemini-3.6-flash
 FRONTEND_URL=https://<frontend-domain>
 UPLOAD_DIR=/app/uploads/resumes
 ```
