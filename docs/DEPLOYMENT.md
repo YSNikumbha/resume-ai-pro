@@ -21,7 +21,7 @@ Gemini API
 
 Do not commit real credentials. Configure secrets only in the deployment platform's secret or environment manager.
 
-## PHASE 1 — CREATE PRODUCTION POSTGRESQL
+## STEP 1 — Create Managed PostgreSQL
 
 Create a managed PostgreSQL database that supports:
 
@@ -99,7 +99,7 @@ Do not assume rows exist before users exercise the application.
 
 For the MVP, production currently inherits `spring.jpa.hibernate.ddl-auto=update` from shared configuration. Do not set production to `create` or `create-drop`; those modes can destroy data. A formal Flyway or Liquibase workflow is a future hardening step.
 
-## PHASE 2 — DEPLOY BACKEND
+## STEP 2 — Deploy Backend
 
 Deploy the Spring Boot backend using a generic Docker-compatible host:
 
@@ -159,7 +159,7 @@ The production Gemini key must:
 - Never appear in the frontend bundle
 - Never be committed
 
-## PHASE 3 — DEPLOY FRONTEND
+## STEP 3 — Deploy Frontend
 
 Deploy the React frontend as a static Vite build:
 
@@ -193,12 +193,11 @@ For non-nginx static hosting, configure equivalent SPA rewrite behavior so refre
 1. Deploy production database.
 2. Deploy backend.
 3. Obtain backend URL.
-4. Set frontend `VITE_API_BASE_URL`.
-5. Deploy frontend.
-6. Obtain frontend URL.
-7. Set backend `FRONTEND_URL` to exact frontend origin.
-8. Restart/redeploy backend.
-9. Test CORS.
+4. Deploy frontend using backend URL.
+5. Obtain frontend URL.
+6. Update backend `FRONTEND_URL`.
+7. Restart/redeploy backend.
+8. Verify browser requests no longer have CORS errors.
 
 Production CORS is controlled by:
 
